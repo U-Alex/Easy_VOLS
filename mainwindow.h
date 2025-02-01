@@ -3,7 +3,8 @@
 
 #include <QMainWindow>
 
-#include "mapmanager.h"
+#include "map/mapmanager.h"
+#include "b_logic/usersession.h"
 
 //QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,12 +19,14 @@ public:
 
     void start();
 
+public slots:
+    void authResult(bool);
 
 private:
     Ui::MainWindow *ui;
 
     MapManager     *mapManager;
-
+    UserSession    *userSession;
 
 };
 

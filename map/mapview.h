@@ -7,9 +7,7 @@
 
 //QT_FORWARD_DECLARE_CLASS(QSlider)
 
-namespace Ui {
-class MapView;
-}
+namespace Ui { class MapView; }
 
 class MapView : public QGraphicsView
 {
@@ -24,11 +22,11 @@ public:
 //    void zoomlEvent(int);
 
 protected:
-    void wheelEvent(QWheelEvent *);
+    void wheelEvent(QWheelEvent *) override;
 
 private slots:
-    void on_pushButton_clicked();
     void setupMatrix();
+    void toggleAntialiasing();
 
 
 private:

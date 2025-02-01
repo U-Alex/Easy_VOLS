@@ -1,4 +1,5 @@
-QT       += core gui
+QT      += core gui
+QT      += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,25 +20,28 @@ win32:OBJECTS_DIR = build/o/win32
 macx:OBJECTS_DIR = build/o/mac
 
 SOURCES += \
+    b_logic/restaccessmanager.cpp \
+    b_logic/usersession.cpp \
     main.cpp \
     mainwindow.cpp \
-    mapmanager.cpp \
-    mapscene.cpp \
-    mapview.cpp
- #    mapview.cpp
+    map/mapmanager.cpp \
+    map/mapscene.cpp \
+    map/mapview.cpp \
+    map/obj/objcoup.cpp
 
 HEADERS += \
+    b_logic/restaccessmanager.h \
+    b_logic/usersession.h \
     mainwindow.h \
-    mapmanager.h \
-    mapscene.h \
-    mapview.h
- #    mapview.h
+    map/mapmanager.h \
+    map/mapscene.h \
+    map/mapview.h \
+    map/obj/objcoup.h
 
 FORMS += \
-    mainwindow.ui \
-    mapmanager.ui \
-    mapview.ui
- #    mapview.ui
+    ui/mainwindow.ui \
+    ui/mapmanager.ui \
+    ui/mapview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

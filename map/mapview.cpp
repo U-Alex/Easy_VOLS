@@ -49,8 +49,7 @@ void MapView::setupMatrix()
     this->setTransform(matrix);
 }
 
-void MapView::on_pushButton_clicked()
+void MapView::toggleAntialiasing()
 {
-    qDebug() << "on_pushButton_clicked";
+//    this->setRenderHint(QPainter::Antialiasing, ui->antialiasButton->isChecked());
 }
-

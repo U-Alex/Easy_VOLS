@@ -19,9 +19,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::start()
 {
-    mapManager = new MapManager(this);
-    ui->map_manager_Layout->addWidget(mapManager);
-
     qDebug() << "start";
+    userSession = new UserSession(this);
+    QObject::connect(userSession, &UserSession::authResult, this, &MainWindow::authResult);
+    //ui form
+    userSession->auth("1", "2");
 
+}
+
+void MainWindow::authResult(bool ok)
+{
+    qDebug() << "authResult" << ok;
+
+
+    mapManager = new MapManager(this, userSession);
+    ui->map_manager_Layout->addWidget(mapManager);
 }
