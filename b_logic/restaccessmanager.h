@@ -21,7 +21,7 @@ public:
     void post(const QString& api, const QVariantMap& value, ResponseCallback callback);
     void get(const QString& api, const QUrlQuery& parameters, ResponseCallback callback);
     void put(const QString& api, const QVariantMap& value, ResponseCallback callback);
-    void deleteResource(const QString& api, ResponseCallback callback);
+    void delete_(const QString& api, ResponseCallback callback);
 
 private:
     QUrl m_url;

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsScene>
+#include <QDebug>
 
 class MapScene : public QGraphicsScene
 {

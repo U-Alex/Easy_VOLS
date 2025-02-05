@@ -4,6 +4,7 @@
 #include <QImageReader>
 //#include <QUrlQuery>        //
 //#include "b_logic/restaccessmanager.h"   //
+//#include "map/obj/objfab.h"
 
 MapManager::MapManager(QWidget *parent, UserSession *us) :
     QWidget(parent),
@@ -17,57 +18,47 @@ MapManager::MapManager(QWidget *parent, UserSession *us) :
 
     scene = new MapScene(this);
     mapView = new MapView(this);
+//    objFab = new ObjFab();                          //
     mapView->setScene(scene);
-//    ui->map_frame_temp->deleteLater();                   //
+    ui->map_frame_temp->deleteLater();                   //
     ui->map_Layout->addWidget(mapView, 0, 1);
 
 
     QImageReader::setAllocationLimit(2048);
-//    QPixmap image("images/map1.png");
-//    pix_map = scene->addPixmap(image);
+    QPixmap image("images/map1.png");
+    pix_map = scene->addPixmap(image);
 //    pix_map ->setData(6, "pix_map");              //
 
-    mapView->centerOn(QPointF(9297, 12978));        //
-
-
-
-    QMap<QString, QString> test_params;
-    test_params.insert("1", "2");
-
-    ObjCoup *coup = new ObjCoup(test_params);
-
-    coup->setPos(QPoint(9297, 12978));
-    scene->addItem(std::move(coup));
-
-
-//
-//    RestAccessManager *ram = new RestAccessManager(this);
-//    RestAccessManager::ResponseCallback callback = [/*this*/](QNetworkReply* reply, bool success) {
-//        if (success) qDebug() << "success";
-//        else         qDebug() << "! success";
-//        qDebug() << reply->readAll();
-//    };
-//    ram->setUrl(QUrl("https://reqres.in/api/users?page=2"));
-//    QUrlQuery query;
-////    query.addQueryItem("page/", QString::number(1));
-//    ram->get("---", query, callback);
-//    qDebug() << "ram->get";
-////    qDebug() << "sslSupported " << ram->sslSupported();
-
-
-
-    userSession->getObj();
-    userSession->getObj(1);
-    userSession->getObj(23);
+    mapView->centerOn(QPointF(9000, 15378));        //
 
 
 
 
 
+    userSession->getObj(ObjType::o_coup);
+    userSession->getObj(ObjType::o_coup, 1);
+//    userSession->getObj(ObjType::o_coup, 23);
 
 }
 
 MapManager::~MapManager()
 {
     delete ui;
+}
+
+void MapManager::objRecieve(ObjType objType, uint id, QList<QGraphicsObject*> list)
+{
+//qDebug() << "objRecieve " << id  << list;
+//    switch(objType) {
+//        case ObjType::o_pw_cont:
+//            break;
+//        case ObjType::o_locker:
+//            break;
+//        case ObjType::o_coup:
+//            break;
+//    }
+    for (auto &coup: list) {
+//        scene->addItem(static_cast<ObjCoup*>(coup));
+        scene->addItem(coup);
+    }
 }

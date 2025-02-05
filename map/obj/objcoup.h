@@ -10,7 +10,8 @@ class ObjCoup : public QGraphicsObject
     Q_OBJECT
 public:
     explicit ObjCoup(QMap<QString, QString> params);
-    ~ObjCoup();
+    explicit ObjCoup();                     //
+//    ~ObjCoup();
 
     QRectF boundingRect() const;
 
@@ -19,7 +20,7 @@ protected:
 
 
 private:
-    QString     name;
+//    QString     name;
     QRectF      p_rect;
 
 };

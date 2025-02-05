@@ -14,9 +14,9 @@ static bool httpResponseSuccess(QNetworkReply* reply)
     const int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const bool isReplyError = (reply->error() != QNetworkReply::NoError);
 
-    qDebug() << "Request to path" << reply->request().url().path() << "finished";
+    qDebug() << "Request to path" << reply->request().url().path() << "finished, " << "HTTP:" <<  httpStatusCode;
     if (isReplyError) qDebug() << "Error" << reply->error();
-    /*else          */qDebug() << "HTTP:" <<  httpStatusCode;
+//    else          qDebug() << "HTTP:" <<  httpStatusCode;
 
     return (!isReplyError && (httpStatusCode >= 200 && httpStatusCode < 300));
 }
@@ -45,7 +45,10 @@ void RestAccessManager::get(const QString& api, const QUrlQuery& parameters, Res
     m_url.setPath(api);
     m_url.setQuery(parameters);
     auto request = QNetworkRequest(m_url);
+    request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationToken, m_authorizationToken);
+//    request.setRawHeader("Authorization", authorizationToken2+m_authorizationToken);
+//    qDebug() << "setRawHeader:" << authorizationToken2+m_authorizationToken;
     QNetworkReply* reply = QNetworkAccessManager::get(request);
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
 }
@@ -70,7 +73,7 @@ void RestAccessManager::put(const QString& api, const QVariantMap& value, Respon
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
 }
 
-void RestAccessManager::deleteResource(const QString& api, ResponseCallback callback)
+void RestAccessManager::delete_(const QString& api, ResponseCallback callback)
 {
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);

@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDebug>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,19 +19,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::start()
 {
-    qDebug() << "start";
     userSession = new UserSession(this);
     QObject::connect(userSession, &UserSession::authResult, this, &MainWindow::authResult);
     //ui form
-    userSession->auth("1", "2");
+    userSession->auth("admin", "admin");
 
 }
 
 void MainWindow::authResult(bool ok)
 {
-    qDebug() << "authResult" << ok;
-
+//    qDebug() << "authResult" << ok;
 
     mapManager = new MapManager(this, userSession);
+    QObject::connect(userSession, &UserSession::objResult, mapManager, &MapManager::objRecieve);
     ui->map_manager_Layout->addWidget(mapManager);
 }

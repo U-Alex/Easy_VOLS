@@ -10,8 +10,13 @@ qDebug() << "constr ObjCoup: " << params;
 //    this->setData()
     p_rect = QRectF(-10, -10, 20, 20);
 }
-
-ObjCoup::~ObjCoup() {}
+ObjCoup::ObjCoup() : QGraphicsObject() {
+    this->setFlags(ItemIsSelectable);
+    this->setZValue(10);
+//    this->setData()
+    p_rect = QRectF(-10, -10, 20, 20);
+}  //
+//ObjCoup::~ObjCoup() {}
 
 QRectF ObjCoup::boundingRect() const
 {
@@ -31,5 +36,7 @@ void ObjCoup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 //    //if (flags() & ItemIsMovable) painter->setBrush(Qt::red);
 //    if (data(7) == 2) painter->setBrush(Qt::red);                                      //ObjVisMode
 //    if (data(7) == 0) painter->setBrush(Qt::gray);                                     //ObjVisMode
+    painter->setBrush(Qt::red);//
     painter->drawEllipse(p_rect);
 }
+

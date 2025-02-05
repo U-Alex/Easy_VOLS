@@ -6,7 +6,8 @@
 
 #include "map/mapscene.h"
 #include "map/mapview.h"
-#include "map/obj/objcoup.h"
+//#include "map/obj/objfab.h"
+//#include "map/obj/objcoup.h"    //
 #include "b_logic/usersession.h"
 
 namespace Ui { class MapManager; }
@@ -21,11 +22,17 @@ public:
 
     MapScene       *scene;
     MapView        *mapView;
+//    ObjFab         *objFab;
+
+public slots:
+    void objRecieve(ObjType, uint, QList<QGraphicsObject*>);
+
 
 private:
     Ui::MapManager *ui;
     UserSession    *userSession;
     QGraphicsPixmapItem *pix_map;
 };
+
 
 #endif // MAPMANAGER_H

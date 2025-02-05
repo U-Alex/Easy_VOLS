@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDebug>
 
 #include "map/mapmanager.h"
 #include "b_logic/usersession.h"
