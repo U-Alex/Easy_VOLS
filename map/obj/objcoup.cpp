@@ -1,27 +1,18 @@
 #include "map/obj/objcoup.h"
 
-#include <QDebug>
 
-ObjCoup::ObjCoup(QMap<QString, QString> params) : QGraphicsObject()
+ObjCoup::ObjCoup(int parr_type, QColor color) : QGraphicsObject()
 {
-qDebug() << "constr ObjCoup: " << params;
     this->setFlags(ItemIsSelectable);
-    this->setZValue(10);
-//    this->setData()
-    p_rect = QRectF(-10, -10, 20, 20);
+    if     (parr_type == -1) p_rect = QRectF(-6, -6, 12, 12);
+    else if (parr_type == 0) p_rect = QRectF(-8, -8, 16, 16);
+         else                p_rect = QRectF(-10, -10, 20, 20);
+    p_color = color;
 }
-ObjCoup::ObjCoup() : QGraphicsObject() {
-    this->setFlags(ItemIsSelectable);
-    this->setZValue(10);
-//    this->setData()
-    p_rect = QRectF(-10, -10, 20, 20);
-}  //
-//ObjCoup::~ObjCoup() {}
 
 QRectF ObjCoup::boundingRect() const
 {
-//    return p_rect;
-    return QRectF(-10, -10, 20, 20);
+    return p_rect;
 }
 
 void ObjCoup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -29,14 +20,12 @@ void ObjCoup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-//    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-//    //QColor fillColor = (option->state & QStyle::State_Selected) ? p_color.dark(150) : p_color;
-//    painter->setBrush(p_color);
-//    if (isSelected()) painter->setBrush(QColor(Qt::magenta));
-//    //if (flags() & ItemIsMovable) painter->setBrush(Qt::red);
+    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setBrush(p_color);
+    if (isSelected()) painter->setBrush(QColor(Qt::magenta));
 //    if (data(7) == 2) painter->setBrush(Qt::red);                                      //ObjVisMode
 //    if (data(7) == 0) painter->setBrush(Qt::gray);                                     //ObjVisMode
-    painter->setBrush(Qt::red);//
+
     painter->drawEllipse(p_rect);
 }
 

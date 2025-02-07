@@ -2,12 +2,13 @@
 #define USERSESSION_H
 
 #include "b_logic/restaccessmanager.h"
+#include "map/obj/obj.h"
 #include "map/obj/objfab.h"
 
 
-enum class ObjType {
-    o_pw_cont, o_locker, o_coup
-};
+//enum class ObjType {
+//    o_pw_cont, o_locker, o_coup
+//};
 
 class UserSession : public QObject
 {
@@ -17,7 +18,7 @@ public:
     ~UserSession();
 
     void auth(QString login, QString pass);
-    void getObj(ObjType objType, uint id = 0);
+    void getData(ObjType objType, uint id = 0);
 
 signals:
     void authResult(bool);
@@ -28,7 +29,6 @@ private slots:
 
 private:
     ObjFab            *objFab;
-//    static ObjType objType;
     RestAccessManager *_ram;
     struct User {
         int     id;

@@ -4,9 +4,9 @@
 #include <QGraphicsObject>
 #include <QJsonDocument>
 
-enum class Idx {
-    o_id, parrent_id, o_name, o_type
-};
+//enum class Idx {
+//    o_id, parrent_id, parr_type, o_name, o_type
+//};
 
 
 class ObjFab
@@ -16,6 +16,7 @@ public:
     explicit ObjFab();
 
     QList<QGraphicsObject*> createCoup(QJsonDocument json);
+    QList<QGraphicsObject*> createLocker(QJsonDocument json);
 
 
 };

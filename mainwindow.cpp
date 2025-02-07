@@ -23,6 +23,7 @@ void MainWindow::start()
     QObject::connect(userSession, &UserSession::authResult, this, &MainWindow::authResult);
     //ui form
     userSession->auth("admin", "admin");
+//    userSession->auth("uaa", "celfHM123");
 
 }
 

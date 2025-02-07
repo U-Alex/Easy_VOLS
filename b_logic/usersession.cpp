@@ -41,7 +41,7 @@ void UserSession::auth(QString login, QString pass)
 
 }
 
-void UserSession::getObj(ObjType objType, uint id){
+void UserSession::getData(ObjType objType, uint id){
 //    qDebug() << "start getObj " << id;
     RestAccessManager::ResponseCallback callback = [this, objType, id]
             (QNetworkReply* reply, bool success) {
@@ -81,6 +81,7 @@ void UserSession::recieveObj(ObjType objType, uint id, QJsonDocument json)
             case ObjType::o_pw_cont:
                 break;
             case ObjType::o_locker:
+                list = objFab->createLocker(json);
                 break;
             case ObjType::o_coup:
                 list = objFab->createCoup(json);

@@ -22,7 +22,7 @@ public:
 
     MapScene       *scene;
     MapView        *mapView;
-//    ObjFab         *objFab;
+
 
 public slots:
     void objRecieve(ObjType, uint, QList<QGraphicsObject*>);
@@ -32,6 +32,17 @@ private:
     Ui::MapManager *ui;
     UserSession    *userSession;
     QGraphicsPixmapItem *pix_map;
+    QSize           map_size;
+
+private slots:
+    void showAllObj();
+
+
+
+
+
+
+
 };
 
 

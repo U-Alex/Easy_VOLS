@@ -18,32 +18,31 @@ MapManager::MapManager(QWidget *parent, UserSession *us) :
 
     scene = new MapScene(this);
     mapView = new MapView(this);
-//    objFab = new ObjFab();                          //
     mapView->setScene(scene);
     ui->map_frame_temp->deleteLater();                   //
     ui->map_Layout->addWidget(mapView, 0, 1);
 
-
     QImageReader::setAllocationLimit(2048);
-    QPixmap image("images/map1.png");
-    pix_map = scene->addPixmap(image);
+//    QPixmap image("images/map1.png");
+//    map_size = image.size();
+//    pix_map = scene->addPixmap(image);
 //    pix_map ->setData(6, "pix_map");              //
 
     mapView->centerOn(QPointF(9000, 15378));        //
-
-
-
-
-
-    userSession->getObj(ObjType::o_coup);
-    userSession->getObj(ObjType::o_coup, 1);
-//    userSession->getObj(ObjType::o_coup, 23);
+    showAllObj();
 
 }
 
 MapManager::~MapManager()
 {
     delete ui;
+}
+
+void MapManager::showAllObj()
+{
+//    userSession->getData(ObjType::o_pw_cont);
+    userSession->getData(ObjType::o_coup);
+    userSession->getData(ObjType::o_locker);
 }
 
 void MapManager::objRecieve(ObjType objType, uint id, QList<QGraphicsObject*> list)
@@ -57,8 +56,8 @@ void MapManager::objRecieve(ObjType objType, uint id, QList<QGraphicsObject*> li
 //        case ObjType::o_coup:
 //            break;
 //    }
-    for (auto &coup: list) {
+    for (auto &go: list) {
 //        scene->addItem(static_cast<ObjCoup*>(coup));
-        scene->addItem(coup);
+        scene->addItem(std::move(go));
     }
 }
