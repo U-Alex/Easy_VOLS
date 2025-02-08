@@ -32,6 +32,6 @@ void MainWindow::authResult(bool ok)
 //    qDebug() << "authResult" << ok;
 
     mapManager = new MapManager(this, userSession);
-    QObject::connect(userSession, &UserSession::objResult, mapManager, &MapManager::objRecieve);
+//    QObject::connect(userSession, &UserSession::objResult, mapManager, &MapManager::objRecieve);
     ui->map_manager_Layout->addWidget(mapManager);
 }

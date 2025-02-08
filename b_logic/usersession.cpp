@@ -5,12 +5,13 @@
 //#include <thread>           //
 //    std::this_thread::sleep_for(std::chrono::seconds(2));
 
-UserSession::UserSession(QObject *parent)
+UserSession::UserSession(QObject *parent) :
+    QObject(parent)
 {
     Q_UNUSED(parent)
     _ram = new RestAccessManager(this);
     _ram->setUrl(QUrl("http://192.168.1.11:8002"));
-    objFab = new ObjFab();
+//    objFab = new ObjFab();
 }
 
 UserSession::~UserSession()
@@ -27,10 +28,9 @@ void UserSession::auth(QString login, QString pass)
             if (!err.error && !token.isEmpty()) {
                 _ram->setAuthorizationToken(token.toUtf8());
                 emit(authResult(true));
-//                return;
+//            else emit(error...);
             }
         }
-//        emit(authResult(true));//
     };
     QVariantMap param{};
     QMap<QString, QVariant> _pair;
@@ -49,8 +49,8 @@ void UserSession::getData(ObjType objType, uint id){
             QJsonParseError err;
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
             if (!err.error)
-                recieveObj(objType, id, json);
-//                emit(objResult(objType, id, json));
+//                recieveObj(objType, id, json);
+                emit(dataToObj(objType, id, json));
 //            else emit(error...);
 //        qDebug() << "json:" << json;
         }
@@ -73,21 +73,4 @@ void UserSession::getData(ObjType objType, uint id){
 
 }
 
-void UserSession::recieveObj(ObjType objType, uint id, QJsonDocument json)
-{
-    QList<QGraphicsObject*> list;
-    if (!id) {
-        switch(objType) {
-            case ObjType::o_pw_cont:
-                break;
-            case ObjType::o_locker:
-                list = objFab->createLocker(json);
-                break;
-            case ObjType::o_coup:
-                list = objFab->createCoup(json);
-                break;
-        }
-        emit(objResult(objType, id, list));
-    }
 
-}

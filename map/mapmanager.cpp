@@ -5,6 +5,7 @@
 //#include <QUrlQuery>        //
 //#include "b_logic/restaccessmanager.h"   //
 //#include "map/obj/objfab.h"
+//#include "map/obj/obj.h"
 
 MapManager::MapManager(QWidget *parent, UserSession *us) :
     QWidget(parent),
@@ -17,15 +18,17 @@ MapManager::MapManager(QWidget *parent, UserSession *us) :
 //    ui->map_frame_L->setVisible(false);
 
     scene = new MapScene(this);
+    objFab = new ObjFab(scene);
+    QObject::connect(userSession, &UserSession::dataToObj, objFab, &ObjFab::fromDataToObj);
     mapView = new MapView(this);
     mapView->setScene(scene);
     ui->map_frame_temp->deleteLater();                   //
     ui->map_Layout->addWidget(mapView, 0, 1);
 
     QImageReader::setAllocationLimit(2048);
-//    QPixmap image("images/map1.png");
-//    map_size = image.size();
-//    pix_map = scene->addPixmap(image);
+    QPixmap image("images/map1.png");
+    map_size = image.size();
+    pix_map = scene->addPixmap(image);
 //    pix_map ->setData(6, "pix_map");              //
 
     mapView->centerOn(QPointF(9000, 15378));        //
@@ -40,24 +43,9 @@ MapManager::~MapManager()
 
 void MapManager::showAllObj()
 {
-//    userSession->getData(ObjType::o_pw_cont);
+    userSession->getData(ObjType::o_pw_cont);
     userSession->getData(ObjType::o_coup);
     userSession->getData(ObjType::o_locker);
 }
 
-void MapManager::objRecieve(ObjType objType, uint id, QList<QGraphicsObject*> list)
-{
-//qDebug() << "objRecieve " << id  << list;
-//    switch(objType) {
-//        case ObjType::o_pw_cont:
-//            break;
-//        case ObjType::o_locker:
-//            break;
-//        case ObjType::o_coup:
-//            break;
-//    }
-    for (auto &go: list) {
-//        scene->addItem(static_cast<ObjCoup*>(coup));
-        scene->addItem(std::move(go));
-    }
-}
+

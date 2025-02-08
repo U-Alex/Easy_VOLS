@@ -9,7 +9,7 @@ class MapScene : public QGraphicsScene
 {
 public:
     explicit MapScene(QObject *parent);
-    ~MapScene() override;
+//    ~MapScene() override;
 
 
 };

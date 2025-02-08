@@ -3,21 +3,27 @@
 
 #include <QGraphicsObject>
 #include <QJsonDocument>
-
-//enum class Idx {
-//    o_id, parrent_id, parr_type, o_name, o_type
-//};
+#include "map/mapscene.h"
+#include "map/obj/obj.h"
 
 
-class ObjFab
+class ObjFab : public QObject
 {
-//    Q_OBJECT
+    Q_OBJECT
 public:
-    explicit ObjFab();
+    explicit ObjFab(MapScene *scene, QObject *parent = nullptr);
 
-    QList<QGraphicsObject*> createCoup(QJsonDocument json);
-    QList<QGraphicsObject*> createLocker(QJsonDocument json);
 
+public slots:
+    void fromDataToObj(ObjType, uint, QJsonDocument);
+
+private:
+    MapScene       *scene;
+
+private slots:
+    void createCoup(QJsonDocument json);
+    void createLocker(QJsonDocument json);
+    void createPwcont(QJsonDocument json);
 
 };
 

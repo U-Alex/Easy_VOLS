@@ -29,7 +29,8 @@ SOURCES += \
     map/mapview.cpp \
     map/obj/objcoup.cpp \
     map/obj/objfab.cpp \
-    map/obj/objlocker.cpp
+    map/obj/objlocker.cpp \
+    map/obj/objpwcont.cpp
 
 HEADERS += \
     b_logic/restaccessmanager.h \
@@ -41,7 +42,8 @@ HEADERS += \
     map/obj/obj.h \
     map/obj/objcoup.h \
     map/obj/objfab.h \
-    map/obj/objlocker.h
+    map/obj/objlocker.h \
+    map/obj/objpwcont.h
 
 FORMS += \
     ui/mainwindow.ui \

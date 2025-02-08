@@ -3,7 +3,7 @@
 
 #include "b_logic/restaccessmanager.h"
 #include "map/obj/obj.h"
-#include "map/obj/objfab.h"
+//#include "map/obj/objfab.h"
 
 
 //enum class ObjType {
@@ -22,13 +22,10 @@ public:
 
 signals:
     void authResult(bool);
-    void objResult(ObjType, uint, QList<QGraphicsObject*>);
-
-private slots:
-    void recieveObj(ObjType, uint, QJsonDocument);
+    void dataToObj(ObjType, uint, QJsonDocument);
 
 private:
-    ObjFab            *objFab;
+//    ObjFab            *objFab;
     RestAccessManager *_ram;
     struct User {
         int     id;

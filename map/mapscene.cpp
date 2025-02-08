@@ -8,4 +8,4 @@ MapScene::MapScene(QObject *parent) :
 
 }
 
-MapScene::~MapScene() {}
+//MapScene::~MapScene() {}
