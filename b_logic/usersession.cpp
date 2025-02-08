@@ -11,7 +11,7 @@ UserSession::UserSession(QObject *parent) :
     Q_UNUSED(parent)
     _ram = new RestAccessManager(this);
     _ram->setUrl(QUrl("http://192.168.1.11:8002"));
-//    objFab = new ObjFab();
+
 }
 
 UserSession::~UserSession()
@@ -27,7 +27,7 @@ void UserSession::auth(QString login, QString pass)
             auto token = json["token"].toString("");
             if (!err.error && !token.isEmpty()) {
                 _ram->setAuthorizationToken(token.toUtf8());
-                emit(authResult(true));
+                emit(sigAuthResult(true));
 //            else emit(error...);
             }
         }
@@ -50,7 +50,7 @@ void UserSession::getData(ObjType objType, uint id){
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
             if (!err.error)
 //                recieveObj(objType, id, json);
-                emit(dataToObj(objType, id, json));
+                emit(sigDataToObj(objType, id, json));
 //            else emit(error...);
 //        qDebug() << "json:" << json;
         }
@@ -64,6 +64,8 @@ void UserSession::getData(ObjType objType, uint id){
             api.append("locker/"); break;
         case ObjType::o_coup:
             api.append("coup/"); break;
+        case ObjType::o_polyline:
+            api.append("polyline/"); break;
     }
     if (id) api.append(QString("%1").arg(id));
 //    qDebug() << "api:" << api;

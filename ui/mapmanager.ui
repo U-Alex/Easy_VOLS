@@ -76,6 +76,13 @@
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QPushButton" name="pb_map_refresh">
+        <property name="text">
+         <string>обновить карту</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

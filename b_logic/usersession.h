@@ -21,8 +21,8 @@ public:
     void getData(ObjType objType, uint id = 0);
 
 signals:
-    void authResult(bool);
-    void dataToObj(ObjType, uint, QJsonDocument);
+    void sigAuthResult(bool);
+    void sigDataToObj(ObjType, uint, QJsonDocument);
 
 private:
 //    ObjFab            *objFab;

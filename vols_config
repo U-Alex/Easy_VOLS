@@ -1,0 +1,15 @@
+[General]
+
+background_image="images/map1.png"
+
+
+[map]
+
+color_coup="main_company=palegreen◀▶second_company=khaki◀▶РТК=lightblue"
+
+color_lo_co="AREA_1=#00ffff◀▶AREA_2=#e0ff2a◀▶AREA_3=#ff6868"
+
+lo_status_color="orange◀▶yellow◀▶lawngreen◀▶gray"
+lo_status_list="в проекте◀▶монтаж◀▶в работе◀▶отключен"
+
+[coup]

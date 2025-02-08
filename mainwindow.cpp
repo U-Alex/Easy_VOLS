@@ -9,7 +9,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->start();
+    conf = new Config();
+    userSession = new UserSession(this);
+    QObject::connect(userSession, &UserSession::sigAuthResult, this, &MainWindow::slotAuthResult);
+    this->start();  //
 }
 
 MainWindow::~MainWindow()
@@ -19,19 +22,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::start()
 {
-    userSession = new UserSession(this);
-    QObject::connect(userSession, &UserSession::authResult, this, &MainWindow::authResult);
     //ui form
     userSession->auth("admin", "admin");
 //    userSession->auth("uaa", "celfHM123");
 
 }
 
-void MainWindow::authResult(bool ok)
+void MainWindow::slotAuthResult(bool ok)
 {
 //    qDebug() << "authResult" << ok;
 
-    mapManager = new MapManager(this, userSession);
-//    QObject::connect(userSession, &UserSession::objResult, mapManager, &MapManager::objRecieve);
+    mapManager = new MapManager(this, conf, userSession);
     ui->map_manager_Layout->addWidget(mapManager);
 }

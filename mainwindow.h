@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDebug>
 
+#include "config.h"
 #include "map/mapmanager.h"
 #include "b_logic/usersession.h"
 
@@ -21,11 +22,12 @@ public:
     void start();
 
 public slots:
-    void authResult(bool);
+    void slotAuthResult(bool);
 
 private:
     Ui::MainWindow *ui;
 
+    Config         *conf;
     MapManager     *mapManager;
     UserSession    *userSession;
 

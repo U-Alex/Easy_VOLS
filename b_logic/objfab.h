@@ -3,6 +3,8 @@
 
 #include <QGraphicsObject>
 #include <QJsonDocument>
+
+#include "config.h"
 #include "map/mapscene.h"
 #include "map/obj/obj.h"
 
@@ -11,19 +13,21 @@ class ObjFab : public QObject
 {
     Q_OBJECT
 public:
-    explicit ObjFab(MapScene *scene, QObject *parent = nullptr);
+    explicit ObjFab(Config *ref_conf, MapScene *scene, QObject *parent = nullptr);
 
 
 public slots:
-    void fromDataToObj(ObjType, uint, QJsonDocument);
+    void slotDataToObj(ObjType, uint, QJsonDocument);
 
 private:
+    Config         *conf;
     MapScene       *scene;
 
 private slots:
     void createCoup(QJsonDocument json);
     void createLocker(QJsonDocument json);
     void createPwcont(QJsonDocument json);
+    void createPolyline(QJsonDocument json);
 
 };
 

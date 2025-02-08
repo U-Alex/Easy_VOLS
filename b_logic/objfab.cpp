@@ -1,16 +1,18 @@
-#include "map/obj/objfab.h"
+#include "b_logic/objfab.h"
 #include "map/obj/obj.h"
 #include "map/obj/objcoup.h"
 #include "map/obj/objlocker.h"
 #include "map/obj/objpwcont.h"
+#include "map/obj/objpolyline.h"
 
 
-ObjFab::ObjFab(MapScene *scene, QObject *parent) :
+ObjFab::ObjFab(Config *ref_conf, MapScene *scene, QObject *parent) :
     QObject(parent),
+    conf(ref_conf),
     scene(scene)
 {}
 
-void ObjFab::fromDataToObj(ObjType objType, uint id, QJsonDocument json)
+void ObjFab::slotDataToObj(ObjType objType, uint id, QJsonDocument json)
 {
     if (!id) {
         switch(objType) {
@@ -23,6 +25,9 @@ void ObjFab::fromDataToObj(ObjType objType, uint id, QJsonDocument json)
             case ObjType::o_coup:
                 this->createCoup(json);
                 break;
+            case ObjType::o_polyline:
+                this->createPolyline(json);
+                break;
         }
     }
 }
@@ -32,22 +37,21 @@ void ObjFab::createCoup(QJsonDocument json)
     ObjCoup *coup;
     QJsonValue ob;
     int type;
-    QColor color = Qt::green;   //
+    QColor color;
 
     for (auto i = 0; !json[i].isUndefined() ; ++i) {
         ob = json[i];
         if (ob["installed"].toBool()) {
             type = ob["parr_type"].toInt(0);
-//            color = (owner.contains(conf->your_owner)) ? conf->color_coup.at(type+1) : conf->color_coup.at(4);
+            color = conf->color_coup.value(ob["object_owner"].toString(), "silver");
         }
         else {
             type = -1;
-//            color = conf->color_coup.at(5);
+            color = "orange";
         }
         coup = new ObjCoup(type, color);
         coup->setData((int)Idx::label, "coup");
         coup->setData((int)Idx::o_id, ob["id"].toInt(0));
-//        coup->setData((int)Idx::parr_type, type);
         coup->setData((int)Idx::o_name, ob["name"]);
         quint16 xx = ob["coord_x"].toInt(); if (xx < 20) xx = 20;
         quint16 yy = ob["coord_y"].toInt(); if (yy < 20) yy = 20;
@@ -67,9 +71,9 @@ void ObjFab::createLocker(QJsonDocument json)
 
         lo = new ObjLocker(ob["agr"].toBool() + ob["detached"].toBool() * 2,
                            {ob["name"].toString(),
-                            "в работе",
-                            "orange",
-                            "yellow",
+                            conf->lo_status_list.at(ob["status"].toInt(4)),
+                            conf->lo_status_color.at(ob["status"].toInt(4)),
+                            conf->color_lo_co.value(ob["co"].toString(), "silver"),
                             ob["co"].toString(),
                             ob["object_owner"].toString()
                            });
@@ -84,6 +88,7 @@ void ObjFab::createLocker(QJsonDocument json)
         scene->addItem(lo);//        static_cast<QGraphicsObject*>(lo);
     }
 }
+
 void ObjFab::createPwcont(QJsonDocument json)
 {
     ObjPwcont *pw;
@@ -105,4 +110,40 @@ void ObjFab::createPwcont(QJsonDocument json)
     }
 }
 
+void ObjFab::createPolyline(QJsonDocument json)
+{
+    ObjPolyline *polyline;
+    QJsonValue ob;
+    QPainterPath path;
+    QStringList p_list, point, param;
+    for (auto i = 0; !json[i].isUndefined() ; ++i) {
+        ob = json[i];
+//        qDebug() << "ob"<< ob;
+        path.clear();
+        p_list = ob["path"].toString().split("||");
+//        qDebug() << "p_list"<< p_list;
+        for(int i = 0; i < p_list.count(); i++){
+            point = p_list.at(i).split(",");
+            if (i == 0) path.moveTo(QPointF(point.at(0).toInt(), point.at(1).toInt()));
+            else        path.lineTo(QPointF(point.at(0).toInt(), point.at(1).toInt()));
+        }
+        param = ob["param"].toString().split(",");
 
+        polyline = new ObjPolyline(scene);
+        polyline->setPath(path);
+        polyline->setData((int)Idx::label, "polyline");
+        polyline->setData((int)Idx::o_id, ob["id"].toInt(0));
+        polyline->setPen(QPen(QColor(ob["cabcolor"].toString()),
+                              param.at(0).toInt(),
+                              Qt::PenStyle(param.at(1).toInt()),
+                              Qt::RoundCap,
+                              Qt::RoundJoin
+                              ));
+
+//connect(polyline, &obj_Polyline::sig_click, scene, &Map_scene::sig_line_click);
+        polyline->setZValue(param.at(2).toInt());
+
+        scene->addItem(polyline);
+    }
+
+}

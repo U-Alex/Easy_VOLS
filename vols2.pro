@@ -22,27 +22,31 @@ macx:OBJECTS_DIR = build/o/mac
 SOURCES += \
     b_logic/restaccessmanager.cpp \
     b_logic/usersession.cpp \
+    b_logic/objfab.cpp \
+    config.cpp \
     main.cpp \
     mainwindow.cpp \
     map/mapmanager.cpp \
     map/mapscene.cpp \
     map/mapview.cpp \
     map/obj/objcoup.cpp \
-    map/obj/objfab.cpp \
     map/obj/objlocker.cpp \
+    map/obj/objpolyline.cpp \
     map/obj/objpwcont.cpp
 
 HEADERS += \
     b_logic/restaccessmanager.h \
     b_logic/usersession.h \
+    b_logic/objfab.h \
+    config.h \
     mainwindow.h \
     map/mapmanager.h \
     map/mapscene.h \
     map/mapview.h \
     map/obj/obj.h \
     map/obj/objcoup.h \
-    map/obj/objfab.h \
     map/obj/objlocker.h \
+    map/obj/objpolyline.h \
     map/obj/objpwcont.h
 
 FORMS += \

@@ -6,7 +6,7 @@ enum class Idx {
 };
 
 enum class ObjType {
-    o_pw_cont, o_locker, o_coup
+    o_pw_cont, o_locker, o_coup, o_polyline
 };
 
 #endif // OBJ_H
