@@ -30,6 +30,7 @@ SOURCES += \
     map/mapscene.cpp \
     map/mapview.cpp \
     map/obj/objcoup.cpp \
+    map/obj/objdotsignal.cpp \
     map/obj/objlocker.cpp \
     map/obj/objpolyline.cpp \
     map/obj/objpwcont.cpp
@@ -45,6 +46,7 @@ HEADERS += \
     map/mapview.h \
     map/obj/obj.h \
     map/obj/objcoup.h \
+    map/obj/objdotsignal.h \
     map/obj/objlocker.h \
     map/obj/objpolyline.h \
     map/obj/objpwcont.h

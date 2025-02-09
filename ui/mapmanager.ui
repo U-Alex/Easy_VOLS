@@ -64,6 +64,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="lab_obj_name">
+        <property name="text">
+         <string>obj_name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -75,6 +82,32 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_edit">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>редактирование</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_apply">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>применить</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pb_map_refresh">

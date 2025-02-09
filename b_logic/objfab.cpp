@@ -32,6 +32,27 @@ void ObjFab::slotDataToObj(ObjType objType, uint id, QJsonDocument json)
     }
 }
 
+void ObjFab::createPwcont(QJsonDocument json)
+{
+    ObjPwcont *pw;
+    QJsonValue ob;
+    for (auto i = 0; !json[i].isUndefined() ; ++i) {
+        ob = json[i];
+
+        pw = new ObjPwcont(ob["obj_type"].toInt(0),
+                           {"#99CCCC",});
+        pw->setData((int)Idx::label, "pwcont");
+        pw->setData((int)Idx::o_id, ob["id"].toInt(0));
+        pw->setData((int)Idx::o_name, ob["name"]);
+        quint16 xx = ob["coord_x"].toInt(); if (xx < 20) xx = 20;
+        quint16 yy = ob["coord_y"].toInt(); if (yy < 20) yy = 20;
+        pw->setPos(QPoint(xx, yy));
+        pw->setZValue(8);
+
+        scene->addItem(pw);
+    }
+}
+
 void ObjFab::createCoup(QJsonDocument json)
 {
     ObjCoup *coup;
@@ -89,27 +110,6 @@ void ObjFab::createLocker(QJsonDocument json)
     }
 }
 
-void ObjFab::createPwcont(QJsonDocument json)
-{
-    ObjPwcont *pw;
-    QJsonValue ob;
-    for (auto i = 0; !json[i].isUndefined() ; ++i) {
-        ob = json[i];
-
-        pw = new ObjPwcont(ob["obj_type"].toInt(0),
-                           {"#99CCCC",});
-        pw->setData((int)Idx::label, "pwcont");
-        pw->setData((int)Idx::o_id, ob["id"].toInt(0));
-        pw->setData((int)Idx::o_name, ob["name"]);
-        quint16 xx = ob["coord_x"].toInt(); if (xx < 20) xx = 20;
-        quint16 yy = ob["coord_y"].toInt(); if (yy < 20) yy = 20;
-        pw->setPos(QPoint(xx, yy));
-        pw->setZValue(8);
-
-        scene->addItem(pw);
-    }
-}
-
 void ObjFab::createPolyline(QJsonDocument json)
 {
     ObjPolyline *polyline;
@@ -140,10 +140,9 @@ void ObjFab::createPolyline(QJsonDocument json)
                               Qt::RoundJoin
                               ));
 
-//connect(polyline, &obj_Polyline::sig_click, scene, &Map_scene::sig_line_click);
+        QObject::connect(polyline, &ObjPolyline::sigClick, scene, &MapScene::sigLineClick);
         polyline->setZValue(param.at(2).toInt());
 
         scene->addItem(polyline);
     }
-
 }

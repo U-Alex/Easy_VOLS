@@ -27,7 +27,7 @@ void UserSession::auth(QString login, QString pass)
             auto token = json["token"].toString("");
             if (!err.error && !token.isEmpty()) {
                 _ram->setAuthorizationToken(token.toUtf8());
-                emit(sigAuthResult(true));
+                emit sigAuthResult(true);
 //            else emit(error...);
             }
         }
@@ -50,7 +50,7 @@ void UserSession::getData(ObjType objType, uint id){
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
             if (!err.error)
 //                recieveObj(objType, id, json);
-                emit(sigDataToObj(objType, id, json));
+                emit sigDataToObj(objType, id, json);
 //            else emit(error...);
 //        qDebug() << "json:" << json;
         }
