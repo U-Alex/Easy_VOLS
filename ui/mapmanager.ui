@@ -34,13 +34,13 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>40</height>
+       <height>36</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>40</height>
+       <height>36</height>
       </size>
      </property>
      <property name="frameShape">
@@ -50,6 +50,18 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
       <item>
        <widget class="QLabel" name="lab_coord">
         <property name="frameShape">
@@ -97,6 +109,19 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pb_link">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>связи</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="pb_apply">
         <property name="enabled">
          <bool>false</bool>
@@ -111,6 +136,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="pb_map_refresh">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="text">
          <string>обновить карту</string>
         </property>
@@ -144,6 +172,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
@@ -153,7 +184,7 @@
           <x>0</x>
           <y>0</y>
           <width>218</width>
-          <height>552</height>
+          <height>556</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="map_Layout_R">
@@ -180,13 +211,13 @@
       <widget class="QFrame" name="map_frame_L">
        <property name="minimumSize">
         <size>
-         <width>26</width>
+         <width>36</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>26</width>
+         <width>36</width>
          <height>16777215</height>
         </size>
        </property>
@@ -196,7 +227,85 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2"/>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="pb_welding">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>C</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_pix_hide">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>M</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_obj_hide">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>H</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_all_visible">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>V</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
      </item>
      <item row="0" column="1">
@@ -213,6 +322,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>map_scrollArea</tabstop>
+  <tabstop>pb_pix_hide</tabstop>
+  <tabstop>pb_obj_hide</tabstop>
+  <tabstop>pb_all_visible</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

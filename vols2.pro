@@ -1,5 +1,6 @@
 QT      += core gui
 QT      += network
+QT      += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +28,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     map/mapmanager.cpp \
+    map/mapmanageredit.cpp \
+    map/mapmanagerlink.cpp \
     map/mapscene.cpp \
     map/mapview.cpp \
     map/obj/objcoup.cpp \
@@ -42,6 +45,8 @@ HEADERS += \
     config.h \
     mainwindow.h \
     map/mapmanager.h \
+    map/mapmanageredit.h \
+    map/mapmanagerlink.h \
     map/mapscene.h \
     map/mapview.h \
     map/obj/obj.h \
@@ -54,6 +59,8 @@ HEADERS += \
 FORMS += \
     ui/mainwindow.ui \
     ui/mapmanager.ui \
+    ui/mapmanageredit.ui \
+    ui/mapmanagerlink.ui \
     ui/mapview.ui
 
 # Default rules for deployment.

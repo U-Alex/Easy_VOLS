@@ -4,6 +4,8 @@
 #include <QScrollBar>
 //#include <QSlider>
 //#include <QMatrix>
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
 
 MapView::MapView(QWidget *parent) :
     QGraphicsView(parent),
@@ -49,7 +51,32 @@ void MapView::setupMatrix()
     this->setTransform(matrix);
 }
 
-void MapView::toggleAntialiasing()
+void MapView::on_pb_antialiasing_toggled(bool checked)
 {
-//    this->setRenderHint(QPainter::Antialiasing, ui->antialiasButton->isChecked());
+    this->setRenderHint(QPainter::Antialiasing, checked);
 }
+
+void MapView::on_pb_select_mode_toggled(bool checked)
+{
+    this->setDragMode(checked
+                        ? QGraphicsView::RubberBandDrag
+                        : QGraphicsView::ScrollHandDrag);
+    this->setTransformationAnchor(checked
+                        ? QGraphicsView::AnchorUnderMouse
+                        : QGraphicsView::AnchorViewCenter);
+    this->setInteractive(checked);
+}
+
+void MapView::on_pb_print_clicked()
+{
+#ifndef QT_NO_PRINTER
+    QPrinter printer;
+    QPrintDialog dialog(&printer, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        QPainter painter(&printer);
+        this->render(&painter);
+    }
+#endif
+}
+
+

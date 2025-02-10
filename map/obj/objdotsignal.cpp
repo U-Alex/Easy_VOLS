@@ -15,26 +15,9 @@ ObjDotSignal::ObjDotSignal(QGraphicsItem *parentItem, QObject *parent) :
 ObjDotSignal::ObjDotSignal(QPointF pos, QGraphicsItem *parentItem, QObject *parent) :
     ObjDotSignal(parentItem, parent)
 {
-//    setParentItem(parentItem);
-//    setAcceptHoverEvents(true);
-//    setBrush(QBrush(Qt::black));
-//    setRect(-4,-4,8,8);
     this->setPos(pos);
     this->setPreviousPosition(pos);
-//    setDotFlags(0);
 }
-
-//ObjDotSignal::ObjDotSignal(QPointF pos, QGraphicsItem *parentItem, QObject *parent) :
-//    QObject(parent)
-//{
-//    setParentItem(parentItem);
-//    setAcceptHoverEvents(true);
-//    setBrush(QBrush(Qt::black));
-//    setRect(-4,-4,8,8);
-////    setPos(pos);
-////    setPreviousPosition(pos);
-//    setDotFlags(0);
-//}
 
 QPointF ObjDotSignal::previousPosition() const
 {

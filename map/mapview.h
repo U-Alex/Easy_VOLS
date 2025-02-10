@@ -17,20 +17,17 @@ public:
     explicit MapView(QWidget *parent);
     ~MapView();
 
-
-//signals:
-//    void zoomlEvent(int);
-
 protected:
     void wheelEvent(QWheelEvent *) override;
 
-private slots:
-    void setupMatrix();
-    void toggleAntialiasing();
-
-
 private:
     Ui::MapView *ui;
+
+private slots:
+    void setupMatrix();
+    void on_pb_antialiasing_toggled(bool checked);
+    void on_pb_select_mode_toggled(bool checked);
+    void on_pb_print_clicked();
 
 };
 

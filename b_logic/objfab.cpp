@@ -28,9 +28,19 @@ void ObjFab::slotDataToObj(ObjType objType, uint id, QJsonDocument json)
             case ObjType::o_polyline:
                 this->createPolyline(json);
                 break;
+        case ObjType::o_label:
+//                this->createLabel(json);
+                break;
         }
     }
 }
+
+void ObjFab::slotObjToData(ObjType, QVector<QGraphicsObject *>)
+{
+
+}
+
+//--------------------------------------------------------------------------
 
 void ObjFab::createPwcont(QJsonDocument json)
 {
@@ -38,7 +48,7 @@ void ObjFab::createPwcont(QJsonDocument json)
     QJsonValue ob;
     for (auto i = 0; !json[i].isUndefined() ; ++i) {
         ob = json[i];
-
+//        qDebug() << "ob"<< ob;
         pw = new ObjPwcont(ob["obj_type"].toInt(0),
                            {"#99CCCC",});
         pw->setData((int)Idx::label, "pwcont");
@@ -62,18 +72,22 @@ void ObjFab::createCoup(QJsonDocument json)
 
     for (auto i = 0; !json[i].isUndefined() ; ++i) {
         ob = json[i];
+//        qDebug() << "ob"<< ob;
         if (ob["installed"].toBool()) {
-            type = ob["parr_type"].toInt(0);
+            type = ob["parr_type"].toInt();
             color = conf->color_coup.value(ob["object_owner"].toString(), "silver");
         }
         else {
             type = -1;
             color = "orange";
         }
+
         coup = new ObjCoup(type, color);
         coup->setData((int)Idx::label, "coup");
-        coup->setData((int)Idx::o_id, ob["id"].toInt(0));
+        coup->setData((int)Idx::o_id, ob["id"].toInt());
         coup->setData((int)Idx::o_name, ob["name"]);
+        coup->setData((int)Idx::parr_id, ob["parrent"].toInt());
+        coup->setData((int)Idx::parr_type, ob["parr_type"].toInt());
         quint16 xx = ob["coord_x"].toInt(); if (xx < 20) xx = 20;
         quint16 yy = ob["coord_y"].toInt(); if (yy < 20) yy = 20;
         coup->setPos(QPoint(xx, yy));
@@ -89,7 +103,7 @@ void ObjFab::createLocker(QJsonDocument json)
     QJsonValue ob;
     for (auto i = 0; !json[i].isUndefined() ; ++i) {
         ob = json[i];
-
+//        qDebug() << "ob"<< ob;
         lo = new ObjLocker(ob["agr"].toBool() + ob["detached"].toBool() * 2,
                            {ob["name"].toString(),
                             conf->lo_status_list.at(ob["status"].toInt(4)),
@@ -139,6 +153,11 @@ void ObjFab::createPolyline(QJsonDocument json)
                               Qt::RoundCap,
                               Qt::RoundJoin
                               ));
+        polyline->setData((int)Idx::lineidid, ob["lineidid"].toString());
+        polyline->setData((int)Idx::linecncn, ob["linecncn"].toString());
+        polyline->setData((int)Idx::cabtype, ob["cabtype"].toString());
+        polyline->setData((int)Idx::cabcolor, ob["cabcolor"].toString());
+        polyline->setData((int)Idx::param, ob["param"].toString());
 
         QObject::connect(polyline, &ObjPolyline::sigClick, scene, &MapScene::sigLineClick);
         polyline->setZValue(param.at(2).toInt());

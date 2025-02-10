@@ -1,7 +1,7 @@
 #include "mapmanager.h"
 #include "ui_mapmanager.h"
 
-#include "map/obj/objpolyline.h"
+#include "map/obj/objlocker.h"
 
 #include <QImageReader>
 
@@ -13,7 +13,7 @@ MapManager::MapManager(QWidget *parent, Config *ref_conf, UserSession *us) :
 {
     ui->setupUi(this);
 
-//    ui->map_scrollArea->setVisible(false);
+    ui->map_scrollArea->setVisible(false);
 //    ui->map_frame_L->setVisible(false);
 
     scene = new MapScene(this);
@@ -56,10 +56,20 @@ void MapManager::showAllObj()
     userSession->getData(ObjType::o_coup);
     userSession->getData(ObjType::o_locker);
     userSession->getData(ObjType::o_polyline);
+    userSession->getData(ObjType::o_label);
 }
 
 void MapManager::on_pb_map_refresh_clicked()
 {
+    queue_pw_cont.clear();
+    queue_coup.clear();
+    queue_line.clear();
+    queue_label.clear();
+    ui->pb_edit->setChecked(false);
+    ui->pb_apply->setEnabled(false);
+    ui->pb_link->setChecked(false);
+    ui->pb_link->setEnabled(true);
+    last_coup = nullptr;
     int idx = (int)Idx::label;
     foreach(QGraphicsItem *item, scene->items()) {
         if (item->data(idx).toString() != "pix_map") {
@@ -71,52 +81,123 @@ qDebug() << "all items removed";
     showAllObj();
 }
 
+void MapManager::on_pb_edit_pressed()
+{
+    ui->pb_link->setChecked(false);
+}
+
+void MapManager::on_pb_link_pressed()
+{
+    ui->pb_edit->setChecked(false);
+}
+
 void MapManager::on_pb_edit_toggled(bool checked)
 {
+    ui->map_scrollArea->setVisible(checked);
     int conf_lab = (int)Idx::label;
+    QString lab{};
     foreach(QGraphicsItem *item, scene->items()) {
-        if (item->data(conf_lab).toString() == "pwcont") {
+        lab = item->data(conf_lab).toString();
+        if (lab == "polyline")
+            static_cast<ObjPolyline *>(item)->setMove(checked);
+        if (lab == "pwcont")
             item->setFlag(QGraphicsItem::ItemIsMovable, checked);
-        }
-        if (item->data(conf_lab).toString() == "coup") {
+        if (lab == "coup")
             item->setFlag(QGraphicsItem::ItemIsMovable, checked);
-        }
-        if (item->data(conf_lab).toString() == "polyline") {
-            ObjPolyline *poly = static_cast<ObjPolyline *>(item);
-            poly->setMove(checked);
-        }
-//        if (item->data(conf_lab).toString() == "label") {
-//            item->setFlag(QGraphicsItem::ItemIsMovable, checked);
+        if (lab == "label")
+            item->setFlag(QGraphicsItem::ItemIsMovable, checked);
+    }
+    if (fr_edit != nullptr) {
+        ui->map_Layout_R->removeWidget(fr_edit);
+        fr_edit->deleteLater();
+        fr_edit = nullptr;
+    }
+    if (checked) {
+        fr_edit = new MapManagerEdit(this);
+//        connect(scene, &MapScene::sigBlankClick, fr_edit, &MapManagerEdit::slot_blank);
+//        connect(scene, &MapScene::sigLabelClick, fr_edit, &MapManagerEdit::slot_label);
+//        QObject::connect(this, &MapManager::cableClick, fr_edit, &MapManagerEdit::slotCable);
+        ui->map_Layout_R->addWidget(fr_edit);
+    }
+}
+
+void MapManager::on_pb_link_toggled(bool checked)
+{
+    ui->map_scrollArea->setVisible(checked);
+    if (fr_link != nullptr) {
+        ui->map_Layout_R->removeWidget(fr_link);
+        fr_link->deleteLater();
+        fr_link = nullptr;
+    }
+    if (checked) {
+        fr_link = new MapManagerLink(userSession, this);
+        ui->map_Layout_R->addWidget(fr_link);
+    }
+}
+
+void MapManager::on_pb_apply_clicked()
+{
+    qDebug() << "queue_pw_cont"<< queue_pw_cont;
+    qDebug() << "queue_coup"<< queue_coup;
+    qDebug() << "queue_line"<< queue_line;
+    qDebug() << "queue_label"<< queue_label;
+
+    ui->pb_map_refresh->click();
+}
+
+void MapManager::on_pb_pix_hide_toggled(bool checked)
+{
+    pix_map->setVisible(checked);
+}
+
+void MapManager::on_pb_obj_hide_clicked()
+{
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        item->setSelected(false);
+        item->setVisible(false);
+    }
+    if (! ui->pb_all_visible->isEnabled()) ui->pb_all_visible->setEnabled(true);
+}
+
+void MapManager::on_pb_all_visible_clicked()
+{
+//    ui->pb_pix_hide->setChecked(false);
+    ui->pb_all_visible->setEnabled(false);
+//    QList<QString> param;
+//    int conf_param = conf->Obj.indexOf("Param");
+    foreach(QGraphicsItem *item, scene->items()) {
+        item->setSelected(false);
+        item->setVisible(true);
+//        item->setData(conf->Obj.indexOf("VisMode"), 1);
+//        if (item->data(conf->Obj.indexOf("Label")).toString() == "polyline") {
+//            ObjPolyline *poly = static_cast<ObjPolyline *>(item);
+//            param = poly->data(conf_param).toString().split(",");
+//            poly->setPen(QPen(QColor(poly->data(conf->Obj.indexOf("CabColor")).toString()),
+//                              param.at(0).toInt(),
+//                              Qt::PenStyle(param.at(1).toInt()),
+//                              Qt::RoundCap,
+//                              Qt::RoundJoin
+//                              ));
 //        }
     }
-//    ui->scrollArea->setVisible(checked);
-//    if (fr_edit != nullptr) {
-//        ui->R_Layout->removeWidget(fr_edit);
-//        fr_edit->deleteLater();
-//        fr_edit = nullptr;
-//    }
-//    if (checked) {
-//        fr_edit = new Map_mgr_edit(conf, orm, scene, this);
-//        connect(scene, &Map_scene::sig_blank_click, fr_edit, &Map_mgr_edit::slot_blank);
-//        connect(scene, &Map_scene::sig_label_click, fr_edit, &Map_mgr_edit::slot_label);
-//        //connect(scene, &Map_scene::label_click, this, &Map_mgr::slot_label_click);
-//        connect(this, &Map_mgr::cable_click, fr_edit, &Map_mgr_edit::slot_cable);
-//        ui->R_Layout->addWidget(fr_edit);
-//    }
+    //scene->update();
 }
+
 //--------------------------------------------------------------------------
 
 void MapManager::slotPwcontPress(QGraphicsItem *ref_item)
 {
-    if (scene->selectedItems().length() > 1) {
+    if (scene->selectedItems().length() > 1)
         scene->deselectItems();
-    }
     ObjPwcont *item = static_cast<ObjPwcont *>(ref_item);
     QPoint dest_pos = item->scenePos().toPoint();
     last_pw_cont = item;
     last_pw_cont_pos = dest_pos;
-    ui->lab_obj_name->setText("объект: " + item->data((int)Idx::o_name).toString() + " <" + item->data((int)Idx::o_id).toString() + ">");
-    ui->lab_coord->setText(QString("%1,%2").arg(dest_pos.x()).arg(dest_pos.y()));
+    ui->lab_obj_name->setText(QString("объект: %1 <%2>")
+                              .arg(item->data((int)Idx::o_name).toString())
+                              .arg(item->data((int)Idx::o_id).toString()));
+    ui->lab_coord->setText(QString("%1,%2")
+                           .arg(dest_pos.x()).arg(dest_pos.y()));
 }
 
 void MapManager::slotPwcontClick(QGraphicsItem *ref_item)
@@ -144,45 +225,151 @@ void MapManager::slotPwcontClick(QGraphicsItem *ref_item)
 //--------------------------------------------------------------------------
 
 void MapManager::slotCoupPress(QGraphicsItem *ref_item)
-{qDebug() << "slotCoupPress"<< ref_item;
-
+{
+    if (scene->selectedItems().length() > 1)
+        scene->deselectItems();
+    ObjCoup *item = static_cast<ObjCoup *>(ref_item);
+    QPoint dest_pos = item->scenePos().toPoint();
+    last_coup = item;
+    last_coup_pos = dest_pos;
+    ui->lab_obj_name->setText(QString("муфта: %1 <%2>")
+                              .arg(item->data((int)Idx::o_name).toString())
+                              .arg(item->data((int)Idx::o_id).toString()));
+    ui->lab_coord->setText(QString("%1,%2")
+                           .arg(dest_pos.x()).arg(dest_pos.y()));
+    if (fr_link != nullptr)
+        fr_link->setCoup(item);
 }
+
 void MapManager::slotCoupClick(QGraphicsItem *ref_item)
-{qDebug() << "slotCoupClick"<< ref_item;
-
+{
+    ObjCoup *item = static_cast<ObjCoup *>(ref_item);
+    QPoint dest_pos = item->scenePos().toPoint();
+    if (ui->pb_edit->isChecked()) {
+        if (last_coup == item && last_coup_pos != dest_pos) {        //out of size
+            if (dest_pos.x() < 20 || dest_pos.x() > map_size.width()-50 || dest_pos.y() < 20 || dest_pos.y() > map_size.height()-30) {
+                item->setPos(last_coup_pos);
+                dest_pos = last_coup_pos;
+            }
+            else {
+                slotCoupMoved(dest_pos);
+                last_coup_pos = dest_pos;
+            }
+        }
+    }
+    else
+        emit showWelding(item->data((int)Idx::o_id).toInt());
 }
-void MapManager::slotCoupMoved(QPointF to_pos)
-{qDebug() << "slotCoupMoved"<< to_pos;
 
+void MapManager::slotCoupMoved(QPointF to_pos)
+{
+    ui->pb_apply->setEnabled(true);
+    ui->pb_link->setEnabled(false);
+    QString idid;
+    QString last_id = last_coup->data((int)Idx::o_id).toString();
+    int parr_id = last_coup->data((int)Idx::parr_id).toInt();
+    int curr_type = last_coup->data((int)Idx::parr_type).toInt();
+    int c_id = last_id.toInt();
+    if (! queue_coup.contains(c_id))
+        queue_coup << c_id;
+    foreach(QGraphicsItem *item, scene->items()) {
+        if (curr_type == 0) {
+            if ((item->data((int)Idx::label).toString() == "locker") && (item->data((int)Idx::o_id).toInt() == parr_id)) {
+                //obj_lo *lo = static_cast<obj_lo *>(item);
+                item->setPos(to_pos);
+            }
+        }
+        if (item->data((int)Idx::label).toString() == "polyline") {
+            idid = item->data((int)Idx::lineidid).toString();
+
+            if (idid.startsWith(last_id+",")) {
+                ObjPolyline *poly = static_cast<ObjPolyline *>(item);
+                QPainterPath linePath = poly->path();
+                linePath.setElementPositionAt(0, to_pos.x(), to_pos.y());
+                poly->setPath(linePath);
+                int l_id = poly->data((int)Idx::o_id).toInt();
+                if (! queue_line.contains(l_id)) {
+                    queue_line << l_id;
+                }
+            }
+            if (idid.endsWith(","+last_id)) {
+                ObjPolyline *poly = static_cast<ObjPolyline *>(item);
+                QPainterPath linePath = poly->path();
+                linePath.setElementPositionAt(linePath.elementCount()-1, to_pos.x(), to_pos.y());
+                poly->setPath(linePath);
+                int l_id = poly->data((int)Idx::o_id).toInt();
+                if (! queue_line.contains(l_id)) {
+                    queue_line << l_id;
+                }
+            }
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
 
-
 void MapManager::slotLockerClick(QGraphicsItem *ref_item)
-{qDebug() << "slotLockerClick"<< ref_item;
-
+{
+    ObjLocker *item = static_cast<ObjLocker *>(ref_item);
+    ui->lab_obj_name->setText(QString("объект: %1 <%2>")
+                              .arg(item->data((int)Idx::o_name).toString())
+                              .arg(item->data((int)Idx::o_id).toString()));
+    ui->lab_coord->setText(QString("%1,%2")
+                           .arg(item->pos().toPoint().x()).arg(item->pos().toPoint().y()));
 }
 
 //--------------------------------------------------------------------------
 
 void MapManager::slotLineClick(QGraphicsItem *ref_item)
-{qDebug() << "slotLineClick"<< ref_item;
-
+{
+    ObjPolyline *item = static_cast<ObjPolyline *>(ref_item);
+    ui->lab_obj_name->setText(QString("кабель: %1 <%2>")
+                              .arg(item->data((int)Idx::cabtype).toString())
+                              .arg(item->data((int)Idx::o_id).toString()));
+//    ui->lab_obj_name->setText("кабель: " + item->data((int)Idx::cabtype).toString() +" <"+ item->data((int)Idx::o_id).toString());
+//                          " | " + item->data(conf->Obj.indexOf("LineIdId")).toString() +
+//                          " | " + item->data(conf->Obj.indexOf("LineCNCN")).toString() + ">");
+    ui->lab_coord->setText("  ");
+//    ui->pb_obj_hide->setEnabled(true);
+    if (ui->pb_edit->isChecked()) {
+//        emit cableClick(item);
+        fr_edit->cableClick(item);
+        int l_id = item->data((int)Idx::o_id).toInt();
+        if (! queue_line.contains(l_id))
+            queue_line << l_id;
+        if (! ui->pb_apply->isEnabled())
+            ui->pb_apply->setEnabled(true);
+    }
+    if (scene->selectedItems().count() == 1) {
+        if (item->data(0).toInt() != scene->selectedItems().at(0)->data(0).toInt()) {
+            scene->deselectItems();
+            item->setSelected(true);
+        }
+    }
+    else {
+        scene->deselectItems();
+        item->setSelected(true);
+    }
 }
 
 //--------------------------------------------------------------------------
 
-void MapManager::slotBlankClick(QPoint to_pos)
-{qDebug() << "slotBlankClick"<< to_pos;
-
+void MapManager::slotBlankClick(QPoint pos)
+{
+    ui->lab_coord->setText(QString("%1,%2").arg(pos.x()).arg(pos.y()));
+    ui->lab_obj_name->clear();
 }
-void MapManager::slotLabelClick(QGraphicsTextItem *ref_item)
-{qDebug() << "slotLabelClick"<< ref_item;
 
+void MapManager::slotLabelClick(QGraphicsTextItem *item)
+{
+    if (ui->pb_edit->isChecked()) {
+        int lab_id = item->data((int)Idx::o_id).toInt();
+        if (! queue_label.contains(lab_id)) {
+            queue_label << lab_id;
+        }
+        if (! ui->pb_apply->isEnabled()) ui->pb_apply->setEnabled(true);
+    }
 }
 
 //--------------------------------------------------------------------------
-
-
 

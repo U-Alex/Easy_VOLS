@@ -15,7 +15,9 @@ UserSession::UserSession(QObject *parent) :
 }
 
 UserSession::~UserSession()
-{}
+{
+    _ram->deleteLater();
+}
 
 void UserSession::auth(QString login, QString pass)
 {
@@ -23,7 +25,8 @@ void UserSession::auth(QString login, QString pass)
         if (success) {
             QJsonParseError err;
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
-        qDebug() << "json token:" << json["token"].toString();
+//        qDebug() << "json token:" << json["token"].toString();
+        qDebug() << "json :" << json;
             auto token = json["token"].toString("");
             if (!err.error && !token.isEmpty()) {
                 _ram->setAuthorizationToken(token.toUtf8());
@@ -41,15 +44,14 @@ void UserSession::auth(QString login, QString pass)
 
 }
 
-void UserSession::getData(ObjType objType, uint id){
-//    qDebug() << "start getObj " << id;
+void UserSession::getData(ObjType objType, uint id)
+{
     RestAccessManager::ResponseCallback callback = [this, objType, id]
             (QNetworkReply* reply, bool success) {
         if (success) {
             QJsonParseError err;
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
             if (!err.error)
-//                recieveObj(objType, id, json);
                 emit sigDataToObj(objType, id, json);
 //            else emit(error...);
 //        qDebug() << "json:" << json;
@@ -66,13 +68,31 @@ void UserSession::getData(ObjType objType, uint id){
             api.append("coup/"); break;
         case ObjType::o_polyline:
             api.append("polyline/"); break;
+        case ObjType::o_label:
+            api.append("label/"); break;
+        default:
+            return;
     }
     if (id) api.append(QString("%1").arg(id));
-//    qDebug() << "api:" << api;
     QUrlQuery param("");
-
     _ram->get(api, param, callback);
-
 }
 
+void UserSession::getCoupLinks(uint id)
+{
+    RestAccessManager::ResponseCallback callback = [this, id]
+            (QNetworkReply* reply, bool success) {
+        if (success) {
+            QJsonParseError err;
+            auto json = QJsonDocument::fromJson(reply->readAll(), &err);
+            if (!err.error)
+                emit sigCoupLinks(id, json);
+//            else emit(error...);
+        qDebug() << "json:" << json;
+        }
+    };
 
+    QString api = QString("/api/vols/coup/%1/links/").arg(id);
+    QUrlQuery param("");
+    _ram->get(api, param, callback);
+}

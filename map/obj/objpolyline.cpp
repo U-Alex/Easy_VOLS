@@ -74,11 +74,9 @@ void ObjPolyline::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     QPainterPath linePath = path();
     for (int i = 0; i < linePath.elementCount(); i++) {
         QPointF point = linePath.elementAt(i);
-//qWarning() <<  i  << point;
         ObjDotSignal *dot = new ObjDotSignal(point, this);
         if (i != 0 && i != linePath. elementCount() - 1) {          //крайние точки не двигать
             connect(dot, &ObjDotSignal::signalMove, this, &ObjPolyline::slotMove);
-//qWarning() << "if" <<  i  << point;
         }
         connect(dot, &ObjDotSignal::signalMouseRelease, this, &ObjPolyline::checkForDeletePoints);
         dot->setDotFlags(ObjDotSignal::Movable);
@@ -113,9 +111,8 @@ void ObjPolyline::checkForDeletePoints()
                 QPainterPath newPath;
                 newPath.moveTo(linePath.elementAt(0));
                 for (int i = 1; i < linePath.elementCount(); i++) {
-                    if (i != m_pointForCheck) {
+                    if (i != m_pointForCheck)
                         newPath.lineTo(linePath.elementAt(i));
-                    }
                 }
                 setPath(newPath);
             }
@@ -126,9 +123,8 @@ void ObjPolyline::checkForDeletePoints()
                 QPainterPath newPath;
                 newPath.moveTo(linePath.elementAt(0));
                 for(int i = 1; i < linePath.elementCount(); i++){
-                    if(i != m_pointForCheck){
+                    if(i != m_pointForCheck)
                         newPath.lineTo(linePath.elementAt(i));
-                    }
                 }
                 setPath(newPath);
             }
@@ -157,5 +153,5 @@ void ObjPolyline::updateDots()
         dot->setDotFlags(ObjDotSignal::Movable);
         listDotes.append(dot);
     }
-    emit(sigClick(this));
+    emit sigClick(this);
 }

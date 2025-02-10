@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
-    <height>192</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="dragMode">
@@ -65,11 +65,24 @@
        <number>4</number>
       </property>
       <item>
-       <widget class="QPushButton" name="antialiasButton">
+       <widget class="QPushButton" name="pb_antialiasing">
         <property name="text">
          <string>сглаживание</string>
         </property>
         <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_select_mode">
+        <property name="text">
+         <string>Sel/Move</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
@@ -88,9 +101,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="pb_print">
         <property name="text">
-         <string>PushButton</string>
+         <string>печать</string>
         </property>
        </widget>
       </item>
