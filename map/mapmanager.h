@@ -34,7 +34,7 @@ public slots:
 
 signals:
 //    void cableClick(ObjPolyline *);
-    void showWelding(int coup_id);
+    void showWelding(uint coup_id);
 
 private:
     Ui::MapManager *ui;

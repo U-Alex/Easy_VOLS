@@ -7,13 +7,30 @@
     <x>0</x>
     <y>0</y>
     <width>210</width>
-    <height>20</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout"/>
+  <layout class="QVBoxLayout" name="verticalLayout_1">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2"/>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>171</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

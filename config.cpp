@@ -16,8 +16,8 @@ Config::Config()
     lo_status_color = setting->value("map/lo_status_color").toString().split(_sep_);
     lo_status_list = setting->value("map/lo_status_list").toString().split(_sep_);
 
-
-
+    str_to_map(setting->value("map/cab_color").toString().split(_sep_), &cab_color);
+    str_to_map(setting->value("map/cab_width").toString().split(_sep_), &cab_width);
 
     setting->deleteLater();
 }

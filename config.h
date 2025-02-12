@@ -14,7 +14,7 @@ public:
 
     QStringList             lo_status_color, lo_status_list;
 
-
+    QMap<QString,QString>   cab_color, cab_width;
 
 private:
     QSettings *setting;

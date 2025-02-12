@@ -3,10 +3,12 @@
 
 #include "map/obj/obj.h"
 
-MapManagerLink::MapManagerLink(UserSession *us, QWidget *parent) :
+MapManagerLink::MapManagerLink(Config *ref_conf, UserSession *us, MapScene *scene, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::MapManagerLink),
-    userSession(us)
+    conf(ref_conf),
+    userSession(us),
+    scene(scene)
 {
     ui->setupUi(this);
 }
@@ -18,9 +20,132 @@ MapManagerLink::~MapManagerLink()
 
 void MapManagerLink::setCoup(ObjCoup *ref_coup)
 {
-    qDebug() << "setCoup" << ref_coup;
+    for (auto &ch: this->children()) {
+        if (ch->objectName().startsWith("d_"))
+        ch->deleteLater();
+    }
+    for (auto &ch: ui->verticalLayout_2->children()) {
+        ch->deleteLater();
+    }
+    current_links.clear();
+//    qDebug() << "current_links"<< current_links.count();
+    QVector<uint> ob;
+    QStringList idid, cncn;
+    foreach (QGraphicsItem *item, scene->items()) {
+        if (item->data((int)Idx::label).toString() == "polyline") {
+            ob << item->data((int)Idx::o_id).toUInt();
+            idid = item->data((int)Idx::lineidid).toString().split(",");
+            ob << idid.at(0).toUInt() << idid.at(1).toUInt();
+            cncn = item->data((int)Idx::linecncn).toString().split(",");
+            ob << cncn.at(0).toUInt() << cncn.at(1).toUInt();
+            current_links.append(ob);
+            ob.clear();
+        }
+    }
+//qDebug() << "current_links"<< current_links;
     coup = ref_coup;
-    //remove old coups...
-
+    coup_id = coup->data((int)Idx::o_id).toUInt();
     userSession->getCoupLinks(coup->data((int)Idx::o_id).toUInt());
 }
+
+void MapManagerLink::slotCoupLinks(uint c_id, QJsonDocument json)
+{
+    if (c_id != coup->data((int)Idx::o_id).toUInt())  qDebug() << "err: c_id != coup.id";
+    QJsonValue ob;
+    QMap<QString, QVariant> rec;
+    coup_links.clear();
+    for (auto i = 0; !json[i].isUndefined() ; ++i) {
+        ob = json[i];
+//        qDebug() << "ob"<< ob;
+        rec.insert("ext_coup_id", ob["ext_coup_id"].toInt());
+        rec.insert("ext_coup_name", ob["ext_coup_name"].toString());
+        rec.insert("ext_cable_num", ob["ext_cable_num"].toInt());
+        rec.insert("ext_coup_x", ob["ext_coup_x"].toInt());
+        rec.insert("ext_coup_y", ob["ext_coup_y"].toInt());
+        rec.insert("cable_num", ob["cable_num"].toInt());
+        rec.insert("cable_type", ob["cable_type"].toInt());
+        rec.insert("cable_name", ob["cable_name"].toString());
+        rec.insert("cable_capa", ob["cable_capa"].toInt());
+        coup_links.append(rec);
+        rec.clear();
+    }
+//    qDebug() << "coup_links" << coup_links;
+    createButCabList();
+}
+
+void MapManagerLink::createButCabList()
+{
+    QLabel *lbl;
+    QPushButton *pcmd1, *pcmd2;
+    QGridLayout *grid_Layout;
+    foreach (auto row, coup_links) {
+
+        lbl = new QLabel(row["cable_num"].toString() + "  " + row["ext_coup_name"].toString());
+        lbl->setObjectName("d_lbl_");
+        pcmd1 = new QPushButton("◀---  ▲  ---▶");
+        pcmd1->setObjectName("d_");
+        pcmd1->setFocusPolicy(Qt::NoFocus);
+        pcmd1->setMinimumSize(120,26); pcmd1->setMaximumSize(120,26);
+        pcmd2 = new QPushButton(" X ");
+        pcmd2->setObjectName("d_");
+        pcmd2->setFocusPolicy(Qt::NoFocus);
+        pcmd2->setMinimumSize(40,26); pcmd2->setMaximumSize(40,26);
+        uint exists = linkExists(coup_id,
+                                 row["ext_coup_id"].toUInt(),
+                                 {row["cable_num"].toUInt(), row["ext_cable_num"].toUInt()});
+        if (exists) {
+            pcmd1->setEnabled(false);
+            pcmd2->setObjectName(QString("d_pcmd2_%1").arg(exists));
+            connect(pcmd2, &QPushButton::clicked, this, &MapManagerLink::butXClicked);
+        } else {
+            pcmd2->setEnabled(false);
+            pcmd1->setObjectName(QString("d_pcmd1_%1").arg(coup_links.indexOf(row)));
+            connect(pcmd1, &QPushButton::pressed, this, &MapManagerLink::butVClicked);
+        }
+        grid_Layout = new QGridLayout;
+        grid_Layout->addWidget(lbl, 0, 0, 1, 2);
+        grid_Layout->addWidget(pcmd1, 1, 0);
+        grid_Layout->addWidget(pcmd2, 1, 1);
+        ui->verticalLayout_2->addLayout(grid_Layout);
+    }
+}
+
+uint MapManagerLink::linkExists(uint c_id, uint dest_c_id, QPair<uint, uint> cn)
+{
+    foreach (auto rec, current_links) {
+        if ((rec.at(1) == c_id && rec.at(2) == dest_c_id && rec.at(3) == cn.first && rec.at(4) == cn.second) ||
+            (rec.at(2) == c_id && rec.at(1) == dest_c_id && rec.at(4) == cn.first && rec.at(3) == cn.second)
+           )
+            return rec.at(0);
+    }
+    return 0;
+}
+
+void MapManagerLink::butVClicked()
+{
+    QPushButton *but = static_cast<QPushButton*>(sender());
+    but->setEnabled(false);
+    QMap<QString, QVariant> inc = coup_links.at(but->objectName().split("_").at(2).toUInt());
+    inc.insert("coup_id", coup->data((int)Idx::o_id).toUInt());
+    inc.insert("cab_color", conf->cab_color.value(inc.value("cable_capa").toString()));
+    inc.insert("cab_width", conf->cab_width.value(inc.value("cable_capa").toString()));
+
+qDebug() << inc;
+}
+
+void MapManagerLink::butXClicked()
+{
+    QPushButton *but = static_cast<QPushButton*>(sender());
+    but->setEnabled(false);
+    QString line_id = but->objectName().split("_").at(2);
+//    orm->erase_link(line_id);
+    foreach(QGraphicsItem *item, scene->items()) {
+        if (item->data((int)Idx::label).toString() == "polyline") {
+            if (item->data((int)Idx::o_id).toString() == line_id) {
+                scene->removeItem(item);
+                delete item;
+            }
+        }
+    }
+}
+

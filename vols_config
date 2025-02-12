@@ -10,6 +10,11 @@ color_coup="main_company=palegreen◀▶second_company=khaki◀▶РТК=lightbl
 color_lo_co="AREA_1=#00ffff◀▶AREA_2=#e0ff2a◀▶AREA_3=#ff6868"
 
 lo_status_color="orange◀▶yellow◀▶lawngreen◀▶gray"
+
 lo_status_list="в проекте◀▶монтаж◀▶в работе◀▶отключен"
+
+cab_color="1=#626262◀▶2=#626262◀▶4=#ffaa00◀▶6=#ff55ff◀▶8=#aa007f◀▶12=#00ff00◀▶16=#00aa00◀▶24=#00aaff◀▶32=#ff557f◀▶48=#5500ff◀▶64=#b32900◀▶96=#aa5500◀▶0=gray◀▶!=red"
+
+cab_width="1=1◀▶2=1◀▶4=1◀▶6=1◀▶8=2◀▶12=2◀▶16=2◀▶24=3◀▶32=3◀▶48=3◀▶64=4◀▶96=4◀▶0=1◀▶!=5"
 
 [coup]

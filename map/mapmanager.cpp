@@ -130,7 +130,8 @@ void MapManager::on_pb_link_toggled(bool checked)
         fr_link = nullptr;
     }
     if (checked) {
-        fr_link = new MapManagerLink(userSession, this);
+        fr_link = new MapManagerLink(conf, userSession, scene, this);
+        QObject::connect(userSession, &UserSession::sigCoupLinks, fr_link, &MapManagerLink::slotCoupLinks);
         ui->map_Layout_R->addWidget(fr_link);
     }
 }

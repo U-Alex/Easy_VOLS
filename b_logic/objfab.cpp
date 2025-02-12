@@ -155,8 +155,8 @@ void ObjFab::createPolyline(QJsonDocument json)
                               ));
         polyline->setData((int)Idx::lineidid, ob["lineidid"].toString());
         polyline->setData((int)Idx::linecncn, ob["linecncn"].toString());
-        polyline->setData((int)Idx::cabtype, ob["cabtype"].toString());
-        polyline->setData((int)Idx::cabcolor, ob["cabcolor"].toString());
+        polyline->setData((int)Idx::cabtype, ob["cabtype"].toString());     //TODO string --> ForeignKey(Templ_cable)
+        polyline->setData((int)Idx::cabcolor, ob["cabcolor"].toString());   //TODO string --> ForeignKey(Templ_cable(add field "cabcolor"))
         polyline->setData((int)Idx::param, ob["param"].toString());
 
         QObject::connect(polyline, &ObjPolyline::sigClick, scene, &MapScene::sigLineClick);
