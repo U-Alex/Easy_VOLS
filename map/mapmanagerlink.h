@@ -23,7 +23,7 @@ public:
 
 public slots:
     void setCoup(ObjCoup *);
-    void slotCoupLinks(uint, QJsonDocument);
+    void slotCoupLinks(/*uint, */QJsonDocument/*, bool*/);
 
 private:
     Ui::MapManagerLink *ui;

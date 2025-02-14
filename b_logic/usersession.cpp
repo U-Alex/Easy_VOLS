@@ -36,10 +36,10 @@ void UserSession::auth(QString login, QString pass)
         }
     };
     QVariantMap param{};
-    QMap<QString, QVariant> _pair;
-    _pair.insert("username", login);
-    _pair.insert("password", pass);
-    param.insert(_pair);
+//    QMap<QString, QVariant> _pair;
+    param.insert("username", login);
+    param.insert("password", pass);
+//    param.insert("data", _pair);
     _ram->post("/api/vols/api-token-auth/", param, callback);
 
 }
@@ -80,13 +80,13 @@ void UserSession::getData(ObjType objType, uint id)
 
 void UserSession::getCoupLinks(uint id)
 {
-    RestAccessManager::ResponseCallback callback = [this, id]
+    RestAccessManager::ResponseCallback callback = [this/*, id*/]
             (QNetworkReply* reply, bool success) {
         if (success) {
             QJsonParseError err;
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
             if (!err.error)
-                emit sigCoupLinks(id, json);
+                emit sigCoupLinks(/*id, */json/*, false*/);
 //            else emit(error...);
 //        qDebug() << "json:" << json;
         }
@@ -96,3 +96,42 @@ void UserSession::getCoupLinks(uint id)
     QUrlQuery param("");
     _ram->get(api, param, callback);
 }
+
+void UserSession::createCoupLink(/*uint id, */QMap<QString, QVariant> data)
+{
+    RestAccessManager::ResponseCallback callback = [this/*, id*/]
+            (QNetworkReply* reply, bool success) {
+        if (success) {
+            QJsonParseError err;
+            auto json = QJsonDocument::fromJson(reply->readAll(), &err);
+            if (!err.error) {
+                emit sigDataToObj(ObjType::o_polyline, 0, json);   //id=0
+//                emit sigCoupLinks(/*id, */json, true);
+            }
+//            else emit(error...);
+//        qDebug() << "json:" << json;
+        }
+    };
+
+//  lineidid, linecncn, cabtype, cabcolor, path, param
+
+    QString api = QString("/api/vols/polyline/");
+//    if (id) api.append(QString("%1").arg(id));
+    QVariantMap param{};
+    param.insert("lineidid", QString("%1,%2").arg(data.value("coup_id").toInt()).arg(data.value("ext_coup_id").toInt()));
+    param.insert("linecncn", QString("%1,%2").arg(data.value("cable_num").toInt()).arg(data.value("ext_cable_num").toInt()));
+    param.insert("cabtype", data.value("cable_name").toString());
+    param.insert("cabcolor", data.value("cab_color").toString());
+    param.insert("path", QString("%1,%2||%3,%4")
+                 .arg(data.value("coup_x").toInt()).arg(data.value("coup_y").toInt())
+                 .arg(data.value("ext_coup_x").toInt()).arg(data.value("ext_coup_y").toInt()));
+    param.insert("param", QString("%1,1,4").arg(data.value("cab_width").toString()));
+    qDebug() << "param"<< param;
+    _ram->put(api, param, callback);
+}
+
+
+
+
+
+

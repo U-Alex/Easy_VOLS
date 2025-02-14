@@ -20,6 +20,13 @@ MapManagerLink::~MapManagerLink()
 
 void MapManagerLink::setCoup(ObjCoup *ref_coup)
 {
+    coup = ref_coup;
+    coup_id = coup->data((int)Idx::o_id).toUInt();
+    userSession->getCoupLinks(coup->data((int)Idx::o_id).toUInt());
+}
+
+void MapManagerLink::slotCoupLinks(/*uint c_id, */QJsonDocument json/*, bool one_link*/)
+{
     for (auto &ch: this->children()) {
         if (ch->objectName().startsWith("d_"))
         ch->deleteLater();
@@ -29,31 +36,22 @@ void MapManagerLink::setCoup(ObjCoup *ref_coup)
     }
     current_links.clear();
 //    qDebug() << "current_links"<< current_links.count();
-    QVector<uint> ob;
+    QVector<uint> it;
     QStringList idid, cncn;
     foreach (QGraphicsItem *item, scene->items()) {
         if (item->data((int)Idx::label).toString() == "polyline") {
-            ob << item->data((int)Idx::o_id).toUInt();
+            it << item->data((int)Idx::o_id).toUInt();
             idid = item->data((int)Idx::lineidid).toString().split(",");
-            ob << idid.at(0).toUInt() << idid.at(1).toUInt();
+            it << idid.at(0).toUInt() << idid.at(1).toUInt();
             cncn = item->data((int)Idx::linecncn).toString().split(",");
-            ob << cncn.at(0).toUInt() << cncn.at(1).toUInt();
-            current_links.append(ob);
-            ob.clear();
+            it << cncn.at(0).toUInt() << cncn.at(1).toUInt();
+            current_links.append(it);
+            it.clear();
         }
     }
-//qDebug() << "current_links"<< current_links;
-    coup = ref_coup;
-    coup_id = coup->data((int)Idx::o_id).toUInt();
-    userSession->getCoupLinks(coup->data((int)Idx::o_id).toUInt());
-}
-
-void MapManagerLink::slotCoupLinks(uint c_id, QJsonDocument json)
-{
-    if (c_id != coup->data((int)Idx::o_id).toUInt())  qDebug() << "err: c_id != coup.id";
+    /*if (!one_link) */coup_links.clear();
     QJsonValue ob;
     QMap<QString, QVariant> rec;
-    coup_links.clear();
     for (auto i = 0; !json[i].isUndefined() ; ++i) {
         ob = json[i];
 //        qDebug() << "ob"<< ob;
@@ -69,7 +67,7 @@ void MapManagerLink::slotCoupLinks(uint c_id, QJsonDocument json)
         coup_links.append(rec);
         rec.clear();
     }
-//    qDebug() << "coup_links" << coup_links;
+    qDebug() << "current_links"<< current_links.count() << "coup_links" << coup_links.count();
     createButCabList();
 }
 
@@ -79,7 +77,6 @@ void MapManagerLink::createButCabList()
     QPushButton *pcmd1, *pcmd2;
     QGridLayout *grid_Layout;
     foreach (auto row, coup_links) {
-
         lbl = new QLabel(row["cable_num"].toString() + "  " + row["ext_coup_name"].toString());
         lbl->setObjectName("d_lbl_");
         pcmd1 = new QPushButton("◀---  ▲  ---▶");
@@ -112,7 +109,7 @@ void MapManagerLink::createButCabList()
 
 uint MapManagerLink::linkExists(uint c_id, uint dest_c_id, QPair<uint, uint> cn)
 {
-    foreach (auto rec, current_links) {
+    foreach (auto &rec, current_links) {
         if ((rec.at(1) == c_id && rec.at(2) == dest_c_id && rec.at(3) == cn.first && rec.at(4) == cn.second) ||
             (rec.at(2) == c_id && rec.at(1) == dest_c_id && rec.at(4) == cn.first && rec.at(3) == cn.second)
            )
@@ -125,12 +122,15 @@ void MapManagerLink::butVClicked()
 {
     QPushButton *but = static_cast<QPushButton*>(sender());
     but->setEnabled(false);
-    QMap<QString, QVariant> inc = coup_links.at(but->objectName().split("_").at(2).toUInt());
-    inc.insert("coup_id", coup->data((int)Idx::o_id).toUInt());
-    inc.insert("cab_color", conf->cab_color.value(inc.value("cable_capa").toString()));
-    inc.insert("cab_width", conf->cab_width.value(inc.value("cable_capa").toString()));
+    QMap<QString, QVariant> new_link = coup_links.at(but->objectName().split("_").at(2).toUInt());
+    new_link.insert("coup_id", coup->data((int)Idx::o_id).toUInt());
+    new_link.insert("coup_x", coup->x());
+    new_link.insert("coup_y", coup->y());
+    new_link.insert("cab_color", conf->cab_color.value(new_link.value("cable_capa").toString()));
+    new_link.insert("cab_width", conf->cab_width.value(new_link.value("cable_capa").toString()));
+//    qDebug() << new_link;
 
-qDebug() << inc;
+    userSession->createCoupLink(/*0, */new_link);
 }
 
 void MapManagerLink::butXClicked()

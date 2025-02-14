@@ -15,12 +15,12 @@ public:
     void auth(QString login, QString pass);
     void getData(ObjType objType, uint id = 0);
     void getCoupLinks(uint id);
-    void setCoupLinks(QMap<QString, QVariant>);
+    void createCoupLink(/*uint id, */QMap<QString, QVariant>);
 
 signals:
     void sigAuthResult(bool);
     void sigDataToObj(ObjType, uint, QJsonDocument);
-    void sigCoupLinks(uint, QJsonDocument);
+    void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
 
 private:
 //    ObjFab            *objFab;
