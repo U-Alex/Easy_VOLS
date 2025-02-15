@@ -130,7 +130,7 @@ void MapManagerLink::butVClicked()
     new_link.insert("cab_width", conf->cab_width.value(new_link.value("cable_capa").toString()));
 //    qDebug() << new_link;
 
-    userSession->createCoupLink(/*0, */new_link);
+    userSession->createLink(/*0, */new_link);
 }
 
 void MapManagerLink::butXClicked()
@@ -138,8 +138,8 @@ void MapManagerLink::butXClicked()
     QPushButton *but = static_cast<QPushButton*>(sender());
     but->setEnabled(false);
     QString line_id = but->objectName().split("_").at(2);
-//    orm->erase_link(line_id);
-    foreach(QGraphicsItem *item, scene->items()) {
+    userSession->deleteLink(line_id.toUInt());
+    foreach (QGraphicsItem *item, scene->items()) {
         if (item->data((int)Idx::label).toString() == "polyline") {
             if (item->data((int)Idx::o_id).toString() == line_id) {
                 scene->removeItem(item);

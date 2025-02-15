@@ -13,7 +13,7 @@
 #include "b_logic/usersession.h"
 #include "map/obj/objpwcont.h"
 #include "map/obj/objcoup.h"
-#include "map/obj/objpolyline.h"
+//#include "map/obj/objpolyline.h"
 
 namespace Ui { class MapManager; }
 
@@ -24,9 +24,9 @@ public:
     explicit MapManager(QWidget *parent, Config *ref_conf, UserSession *us);
     ~MapManager();
 
-    MapScene       *scene;
-    MapView        *mapView;
-    ObjFab         *objFab;
+//    MapScene       *scene;
+//    MapView        *mapView;
+//    ObjFab         *objFab;
 
 public slots:
 //    void toCoupOnCenter(int coup_id);
@@ -40,6 +40,9 @@ private:
     Ui::MapManager *ui;
     Config         *conf;
     UserSession    *userSession;
+    MapScene       *scene;
+    MapView        *mapView;
+    ObjFab         *objFab;
 
     MapManagerEdit *fr_edit = nullptr;
     MapManagerLink *fr_link = nullptr;
@@ -53,9 +56,9 @@ private:
     ObjCoup        *last_coup = nullptr;
     QPoint          last_coup_pos;
 
-    QVector<int>    queue_pw_cont, queue_coup;
-    QVector<int>    queue_line, queue_label;
-
+    QVector<int>    queue_label;//
+    QMap<int, QList<QVariant>>  pwcont_upd_list, coup_upd_list;
+    QVector<int>    line_upd_id;
 
 private slots:
     void showAllObj();

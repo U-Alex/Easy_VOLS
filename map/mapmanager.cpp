@@ -41,6 +41,7 @@ MapManager::MapManager(QWidget *parent, Config *ref_conf, UserSession *us) :
     pix_map ->setData((int)Idx::label, "pix_map");
 
     mapView->centerOn(QPointF(9000, 15378));        //
+//    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
     showAllObj();
 
 }
@@ -48,6 +49,10 @@ MapManager::MapManager(QWidget *parent, Config *ref_conf, UserSession *us) :
 MapManager::~MapManager()
 {
     delete ui;
+    mapView->deleteLater();
+    objFab->deleteLater();
+    scene->deleteLater();
+
 }
 
 void MapManager::showAllObj()
@@ -61,23 +66,19 @@ void MapManager::showAllObj()
 
 void MapManager::on_pb_map_refresh_clicked()
 {
-    queue_pw_cont.clear();
-    queue_coup.clear();
-    queue_line.clear();
-    queue_label.clear();
     ui->pb_edit->setChecked(false);
-    ui->pb_apply->setEnabled(false);
+//    ui->pb_apply->setEnabled(false);
     ui->pb_link->setChecked(false);
-    ui->pb_link->setEnabled(true);
+//    ui->pb_link->setEnabled(true);
     last_coup = nullptr;
-    int idx = (int)Idx::label;
+    int id = (int)Idx::label;
     foreach(QGraphicsItem *item, scene->items()) {
-        if (item->data(idx).toString() != "pix_map") {
+        if (item->data(id).toString() != "pix_map") {
             scene->removeItem(item);
             delete item;
         }
     }
-qDebug() << "all items removed";
+//qDebug() << "all items removed";
     showAllObj();
 }
 
@@ -96,15 +97,12 @@ void MapManager::on_pb_edit_toggled(bool checked)
     ui->map_scrollArea->setVisible(checked);
     int conf_lab = (int)Idx::label;
     QString lab{};
-    foreach(QGraphicsItem *item, scene->items()) {
+    QStringList lab_list{"pwcont", "coup", "label"};
+    foreach (QGraphicsItem *item, scene->items()) {
         lab = item->data(conf_lab).toString();
         if (lab == "polyline")
             static_cast<ObjPolyline *>(item)->setMove(checked);
-        if (lab == "pwcont")
-            item->setFlag(QGraphicsItem::ItemIsMovable, checked);
-        if (lab == "coup")
-            item->setFlag(QGraphicsItem::ItemIsMovable, checked);
-        if (lab == "label")
+        if (lab_list.contains(lab))
             item->setFlag(QGraphicsItem::ItemIsMovable, checked);
     }
     if (fr_edit != nullptr) {
@@ -138,12 +136,43 @@ void MapManager::on_pb_link_toggled(bool checked)
 
 void MapManager::on_pb_apply_clicked()
 {
-    qDebug() << "queue_pw_cont"<< queue_pw_cont;
-    qDebug() << "queue_coup"<< queue_coup;
-    qDebug() << "queue_line"<< queue_line;
+    ui->pb_apply->setEnabled(false);
+    ui->pb_link->setEnabled(true);
+
+    if (! pwcont_upd_list.isEmpty()) {
+        userSession->setData(ObjType::o_pw_cont, pwcont_upd_list);
+    }
+    if (! coup_upd_list.isEmpty()) {
+        userSession->setData(ObjType::o_coup, coup_upd_list);
+    }
+    if (! line_upd_id.isEmpty()) {
+        QMap<int, QList<QVariant>>  line_upd_list;
+        ObjPolyline *poly;
+        foreach (QGraphicsItem *item, scene->items()) {
+            if (item->data((int)Idx::label).toString() == "polyline") {
+                int l_id = item->data((int)Idx::o_id).toInt();
+                if (line_upd_id.contains(l_id)) {
+                    poly = static_cast<ObjPolyline *>(item);
+                    QPainterPath path = poly->path();
+                    QStringList p_list{};
+                    for(int i = 0; i < path.elementCount(); ++i){
+                        QPointF point = path.elementAt(i);
+                        p_list << QString("%1,%2").arg(point.toPoint().x()).arg(point.toPoint().y());
+                    }
+                    line_upd_list.insert(l_id, {p_list.join("||"), poly->data((int)Idx::param).toString()});
+                }
+            }
+        }
+        userSession->setData(ObjType::o_polyline, line_upd_list);
+    }
     qDebug() << "queue_label"<< queue_label;
 
-    ui->pb_map_refresh->click();
+    pwcont_upd_list.clear();
+    coup_upd_list.clear();
+    line_upd_id.clear();
+    queue_label.clear();
+
+//    ui->pb_map_refresh->click();
 }
 
 void MapManager::on_pb_pix_hide_toggled(bool checked)
@@ -166,7 +195,7 @@ void MapManager::on_pb_all_visible_clicked()
     ui->pb_all_visible->setEnabled(false);
 //    QList<QString> param;
 //    int conf_param = conf->Obj.indexOf("Param");
-    foreach(QGraphicsItem *item, scene->items()) {
+    foreach (QGraphicsItem *item, scene->items()) {
         item->setSelected(false);
         item->setVisible(true);
 //        item->setData(conf->Obj.indexOf("VisMode"), 1);
@@ -210,15 +239,20 @@ void MapManager::slotPwcontClick(QGraphicsItem *ref_item)
             if (dest_pos.x() < 20 || dest_pos.x() > map_size.width()-50 || dest_pos.y() < 20 || dest_pos.y() > map_size.height()-30) {
                 item->setPos(last_pw_cont_pos);
                 dest_pos = last_pw_cont_pos;
+                return;
             }
-            else {
-                int c_id = last_pw_cont->data((int)Idx::o_id).toInt();
-                if (! queue_pw_cont.contains(c_id)) {
-                    queue_pw_cont << c_id;
-                }
+//            else {
+//                int c_id = last_pw_cont->data((int)Idx::o_id).toInt();
+//                if (! queue_pw_cont.contains(c_id)) {           //
+//                    queue_pw_cont << c_id;
+//                }
+//                if (! pwcont_upd_list.contains(c_id)) {qDebug() << "pwcont_upd_list"<< c_id;
+//                    QList<QVariant> u_list{dest_pos};
+                pwcont_upd_list.insert(last_pw_cont->data((int)Idx::o_id).toInt(), {dest_pos.x(), dest_pos.y()});
+//                }
                 last_pw_cont_pos = dest_pos;
                 if (! ui->pb_apply->isEnabled()) ui->pb_apply->setEnabled(true);
-            }
+//            }
         }
     }
 }
@@ -271,8 +305,9 @@ void MapManager::slotCoupMoved(QPointF to_pos)
     int parr_id = last_coup->data((int)Idx::parr_id).toInt();
     int curr_type = last_coup->data((int)Idx::parr_type).toInt();
     int c_id = last_id.toInt();
-    if (! queue_coup.contains(c_id))
-        queue_coup << c_id;
+//    if (! queue_coup.contains(c_id))
+//        queue_coup << c_id;
+    coup_upd_list.insert(c_id, {to_pos.x(), to_pos.y()});
     foreach(QGraphicsItem *item, scene->items()) {
         if (curr_type == 0) {
             if ((item->data((int)Idx::label).toString() == "locker") && (item->data((int)Idx::o_id).toInt() == parr_id)) {
@@ -289,9 +324,8 @@ void MapManager::slotCoupMoved(QPointF to_pos)
                 linePath.setElementPositionAt(0, to_pos.x(), to_pos.y());
                 poly->setPath(linePath);
                 int l_id = poly->data((int)Idx::o_id).toInt();
-                if (! queue_line.contains(l_id)) {
-                    queue_line << l_id;
-                }
+                if (! line_upd_id.contains(l_id))
+                    line_upd_id << l_id;
             }
             if (idid.endsWith(","+last_id)) {
                 ObjPolyline *poly = static_cast<ObjPolyline *>(item);
@@ -299,9 +333,8 @@ void MapManager::slotCoupMoved(QPointF to_pos)
                 linePath.setElementPositionAt(linePath.elementCount()-1, to_pos.x(), to_pos.y());
                 poly->setPath(linePath);
                 int l_id = poly->data((int)Idx::o_id).toInt();
-                if (! queue_line.contains(l_id)) {
-                    queue_line << l_id;
-                }
+                if (! line_upd_id.contains(l_id))
+                    line_upd_id << l_id;
             }
         }
     }
@@ -336,8 +369,8 @@ void MapManager::slotLineClick(QGraphicsItem *ref_item)
 //        emit cableClick(item);
         fr_edit->cableClick(item);
         int l_id = item->data((int)Idx::o_id).toInt();
-        if (! queue_line.contains(l_id))
-            queue_line << l_id;
+        if (! line_upd_id.contains(l_id))
+            line_upd_id << l_id;
         if (! ui->pb_apply->isEnabled())
             ui->pb_apply->setEnabled(true);
     }

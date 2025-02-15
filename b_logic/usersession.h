@@ -14,8 +14,10 @@ public:
 
     void auth(QString login, QString pass);
     void getData(ObjType objType, uint id = 0);
+    void setData(ObjType objType, QMap<int, QList<QVariant>>);
     void getCoupLinks(uint id);
-    void createCoupLink(/*uint id, */QMap<QString, QVariant>);
+    void createLink(/*uint id, */QMap<QString, QVariant>);
+    void deleteLink(uint id);
 
 signals:
     void sigAuthResult(bool);

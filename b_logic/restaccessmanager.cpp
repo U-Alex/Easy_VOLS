@@ -1,5 +1,6 @@
 #include "restaccessmanager.h"
 
+#include <QJsonArray>//
 using namespace Qt::StringLiterals;
 static constexpr auto contentTypeJson = "application/json"_L1;
 static const auto authorizationToken = "TOKEN"_ba;
@@ -47,19 +48,22 @@ void RestAccessManager::get(const QString& api, const QUrlQuery& parameters, Res
     auto request = QNetworkRequest(m_url);
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationToken, m_authorizationToken);
-//    request.setRawHeader("Authorization", authorizationToken2+m_authorizationToken);
-//    qDebug() << "setRawHeader:" << authorizationToken2+m_authorizationToken;
     QNetworkReply* reply = QNetworkAccessManager::get(request);
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
 }
 
 void RestAccessManager::post(const QString& api, const QVariantMap& value, ResponseCallback callback)
 {
+    post(api, QJsonDocument::fromVariant(value), callback);
+}
+
+void RestAccessManager::post(const QString& api, const QJsonDocument& value, ResponseCallback callback)
+{
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationToken, m_authorizationToken);
-    QNetworkReply* reply = QNetworkAccessManager::post(request, QJsonDocument::fromVariant(value).toJson(QJsonDocument::Compact));
+    QNetworkReply* reply = QNetworkAccessManager::post(request, value.toJson(QJsonDocument::Compact));
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
 }
 

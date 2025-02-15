@@ -358,28 +358,28 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>109</x>
-     <y>249</y>
+     <x>113</x>
+     <y>279</y>
     </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>270</y>
+     <x>178</x>
+     <y>250</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_lab_z_index</sender>
+   <sender>spinBox_line_z_index</sender>
    <signal>valueChanged(int)</signal>
    <receiver>pb_line_apply</receiver>
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>109</x>
-     <y>44</y>
+     <x>169</x>
+     <y>269</y>
     </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>270</y>
+     <x>178</x>
+     <y>250</y>
     </hint>
    </hints>
   </connection>
@@ -394,8 +394,8 @@
      <y>299</y>
     </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>270</y>
+     <x>178</x>
+     <y>250</y>
     </hint>
    </hints>
   </connection>

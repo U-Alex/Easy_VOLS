@@ -19,6 +19,7 @@ public:
 
     using ResponseCallback = std::function<void(QNetworkReply*, bool)>;
     void post(const QString& api, const QVariantMap& value, ResponseCallback callback);
+    void post(const QString& api, const QJsonDocument& value, ResponseCallback callback);
     void get(const QString& api, const QUrlQuery& parameters, ResponseCallback callback);
     void put(const QString& api, const QVariantMap& value, ResponseCallback callback);
     void delete_(const QString& api, ResponseCallback callback);
