@@ -27,9 +27,9 @@ public slots:
 
 private:
     Ui::MapManagerLink *ui;
-    Config             *conf;
-    UserSession        *userSession;
-    MapScene           *scene;
+    Config             *conf = nullptr;
+    UserSession        *userSession = nullptr;
+    MapScene           *scene = nullptr;
 
     ObjCoup            *coup = nullptr;
     uint                coup_id;

@@ -13,7 +13,7 @@
 #include "b_logic/usersession.h"
 #include "map/obj/objpwcont.h"
 #include "map/obj/objcoup.h"
-//#include "map/obj/objpolyline.h"
+#include "coup/coupmanager.h"
 
 namespace Ui { class MapManager; }
 
@@ -21,7 +21,7 @@ class MapManager : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MapManager(QWidget *parent, Config *ref_conf, UserSession *us);
+    explicit MapManager(Config *ref_conf, UserSession *us, QWidget *parent = nullptr);
     ~MapManager();
 
 //    MapScene       *scene;
@@ -34,15 +34,16 @@ public slots:
 
 signals:
 //    void cableClick(ObjPolyline *);
-    void showWelding(uint coup_id);
+//    void showWelding(uint coup_id);
 
 private:
     Ui::MapManager *ui;
-    Config         *conf;
-    UserSession    *userSession;
-    MapScene       *scene;
-    MapView        *mapView;
-    ObjFab         *objFab;
+    Config         *conf = nullptr;
+    UserSession    *userSession = nullptr;
+    MapScene       *scene = nullptr;
+    MapView        *mapView = nullptr;
+    ObjFab         *objFab = nullptr;
+    CoupManager    *coupManager = nullptr;
 
     MapManagerEdit *fr_edit = nullptr;
     MapManagerLink *fr_link = nullptr;
@@ -82,6 +83,8 @@ private slots:
     void slotBlankClick(QPoint);
     void slotLabelClick(QGraphicsTextItem *);
 
+    void on_pb_welding_toggled(bool checked);
+    void welding_exit();
 };
 
 

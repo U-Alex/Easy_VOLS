@@ -36,7 +36,9 @@ SOURCES += \
     map/obj/objdotsignal.cpp \
     map/obj/objlocker.cpp \
     map/obj/objpolyline.cpp \
-    map/obj/objpwcont.cpp
+    map/obj/objpwcont.cpp \
+    coup/coupmanager.cpp \
+    coup/couppaint.cpp
 
 HEADERS += \
     b_logic/restaccessmanager.h \
@@ -54,14 +56,18 @@ HEADERS += \
     map/obj/objdotsignal.h \
     map/obj/objlocker.h \
     map/obj/objpolyline.h \
-    map/obj/objpwcont.h
+    map/obj/objpwcont.h \
+    coup/coupmanager.h \
+    coup/couppaint.h
 
 FORMS += \
     ui/mainwindow.ui \
     ui/mapmanager.ui \
     ui/mapmanageredit.ui \
     ui/mapmanagerlink.ui \
-    ui/mapview.ui
+    ui/mapview.ui \
+    ui/coupmanager.ui \
+    ui/couppaint.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -25,7 +25,6 @@ signals:
     void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
 
 private:
-//    ObjFab            *objFab;
     RestAccessManager *_ram;
     struct User {
         int     u_id;

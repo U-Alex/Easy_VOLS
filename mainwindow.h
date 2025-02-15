@@ -19,17 +19,20 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void start();
-
 public slots:
     void slotAuthResult(bool);
+
+private slots:
+    void on_but_login_clicked();
+
+    void on_but_logout_clicked();
 
 private:
     Ui::MainWindow *ui;
 
-    Config         *conf;
-    MapManager     *mapManager;
-    UserSession    *userSession;
+    Config         *conf = nullptr;
+    MapManager     *mapManager = nullptr;
+    UserSession    *userSession = nullptr;
 
 };
 

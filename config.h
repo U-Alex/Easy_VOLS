@@ -9,12 +9,24 @@ public:
     explicit Config();
 
     QString                 map_f_name;
-
     QMap<QString,QString>   color_coup, color_lo_co;
-
     QStringList             lo_status_color, lo_status_list;
-
     QMap<QString,QString>   cab_color, cab_width;
+
+
+
+
+
+
+//coupManager
+    int frame_LR_width =    260;
+
+
+
+
+
+
+
 
 private:
     QSettings *setting;

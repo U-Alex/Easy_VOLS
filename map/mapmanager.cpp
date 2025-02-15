@@ -5,7 +5,7 @@
 
 #include <QImageReader>
 
-MapManager::MapManager(QWidget *parent, Config *ref_conf, UserSession *us) :
+MapManager::MapManager(Config *ref_conf, UserSession *us, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MapManager),
     conf(ref_conf),
@@ -34,25 +34,26 @@ MapManager::MapManager(QWidget *parent, Config *ref_conf, UserSession *us) :
     ui->map_frame_temp->deleteLater();                   //
     ui->map_Layout->addWidget(mapView, 0, 1);
 
-    QImageReader::setAllocationLimit(2048);
-    QPixmap image(conf->map_f_name);
-    map_size = image.size();
-    pix_map = scene->addPixmap(image);
-    pix_map ->setData((int)Idx::label, "pix_map");
+//    QImageReader::setAllocationLimit(2048);
+//    QPixmap image(conf->map_f_name);
+//    map_size = image.size();
+//    pix_map = scene->addPixmap(image);
+//    pix_map ->setData((int)Idx::label, "pix_map");
 
     mapView->centerOn(QPointF(9000, 15378));        //
 //    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
-    showAllObj();
-
+//    showAllObj();
+        ui->pb_welding->click();            //
 }
 
 MapManager::~MapManager()
 {
+    if (coupManager != nullptr) disconnect(coupManager, &CoupManager::destroyed, this, &MapManager::welding_exit);
+//    if (coupManager != nullptr) coupManager->deleteLater();
+//    mapView->deleteLater();
+//    objFab->deleteLater();
+//    scene->deleteLater();
     delete ui;
-    mapView->deleteLater();
-    objFab->deleteLater();
-    scene->deleteLater();
-
 }
 
 void MapManager::showAllObj()
@@ -292,8 +293,8 @@ void MapManager::slotCoupClick(QGraphicsItem *ref_item)
             }
         }
     }
-    else
-        emit showWelding(item->data((int)Idx::o_id).toInt());
+//    else
+//        emit showWelding(item->data((int)Idx::o_id).toInt());
 }
 
 void MapManager::slotCoupMoved(QPointF to_pos)
@@ -406,4 +407,26 @@ void MapManager::slotLabelClick(QGraphicsTextItem *item)
 }
 
 //--------------------------------------------------------------------------
+
+
+void MapManager::on_pb_welding_toggled(bool checked)
+{
+    if (checked) {
+        if (coupManager == nullptr) coupManager = new CoupManager(conf, userSession, this);
+        coupManager->setAttribute(Qt::WA_DeleteOnClose, 1);
+        coupManager->setWindowFlags(Qt::Window);
+        connect(coupManager, &CoupManager::destroyed, this, &MapManager::welding_exit);
+        coupManager->show();
+    } else if (coupManager != nullptr) {
+        coupManager->deleteLater();
+        coupManager = nullptr;
+    }
+}
+
+void MapManager::welding_exit()
+{
+    coupManager = nullptr;
+    ui->pb_welding->setChecked(false);
+}
+
 

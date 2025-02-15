@@ -26,20 +26,21 @@ void UserSession::auth(QString login, QString pass)
             QJsonParseError err;
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
 //        qDebug() << "json token:" << json["token"].toString();
-        qDebug() << "json :" << json;
             auto token = json["token"].toString("");
             if (!err.error && !token.isEmpty()) {
                 _ram->setAuthorizationToken(token.toUtf8());
                 emit sigAuthResult(true);
+                return;
 //            else emit(error...);
             }
         }
+        emit sigAuthResult(false);
     };
+    QString api{"/api/vols/api-token-auth/"};
     QVariantMap param{};
     param.insert("username", login);
     param.insert("password", pass);
-    _ram->post("/api/vols/api-token-auth/", param, callback);
-
+    _ram->post(api, param, callback);
 }
 
 //--------------------------------------------------------------------------
@@ -57,7 +58,6 @@ void UserSession::getData(ObjType objType, uint id)
 //        qDebug() << "json:" << json;
         }
     };
-
     QString api{"/api/vols/"};
     switch(objType) {
         case ObjType::o_pw_cont:
@@ -93,7 +93,6 @@ void UserSession::setData(ObjType objType, QMap<int, QList<QVariant>> data)
 //            else emit(error...);
         }
     };
-
     QString api{"/api/vols/"};
     QJsonArray params;
     QJsonObject param;
@@ -153,7 +152,6 @@ void UserSession::getCoupLinks(uint id)
 //        qDebug() << "json:" << json;
         }
     };
-
     QString api = QString("/api/vols/coup/%1/links/").arg(id);
     QUrlQuery param("");
     _ram->get(api, param, callback);
@@ -174,9 +172,6 @@ void UserSession::createLink(/*uint id, */QMap<QString, QVariant> data)
 //        qDebug() << "json:" << json;
         }
     };
-
-//  lineidid, linecncn, cabtype, cabcolor, path, param
-
     QString api = QString("/api/vols/polyline/");
 //    if (id) api.append(QString("%1").arg(id));
     QVariantMap param{};
@@ -207,7 +202,6 @@ void UserSession::deleteLink(uint id)
 //        qDebug() << "json:" << json;
         }
     };
-
     QString api = QString("/api/vols/polyline/");
     if (id) api.append(QString("%1/").arg(id));
 
