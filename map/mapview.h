@@ -17,6 +17,9 @@ public:
     explicit MapView(QWidget *parent);
     ~MapView();
 
+public slots:
+    void slotCoupOnCenter(/*uint, */QPoint);
+
 protected:
     void wheelEvent(QWheelEvent *) override;
 

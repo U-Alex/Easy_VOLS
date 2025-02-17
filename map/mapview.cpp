@@ -6,6 +6,9 @@
 //#include <QMatrix>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
+#include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
+#include <QGraphicsItem>
 
 MapView::MapView(QWidget *parent) :
     QGraphicsView(parent),
@@ -79,4 +82,24 @@ void MapView::on_pb_print_clicked()
 #endif
 }
 
+void MapView::slotCoupOnCenter(/*uint c_id, */QPoint pos)
+{
+    ui->zoomSlider->setValue(250);
+    this->scene()->items(pos).first()->setSelected(1);
+
+    int to_y = pos.y() - (this->viewport()->rect().height() / 2);
+    int to_x = pos.x() - (this->viewport()->rect().width() / 2);
+    QPropertyAnimation *anim_v = new QPropertyAnimation(this->verticalScrollBar(), "value", this);
+    //anim_v->setStartValue(fr_y);
+    anim_v->setDuration(300);
+    anim_v->setEndValue(to_y);
+    QPropertyAnimation *anim_h = new QPropertyAnimation(this->horizontalScrollBar(), "value", this);
+    //anim_h->setStartValue(fr_x);
+    anim_h->setDuration(300);
+    anim_h->setEndValue(to_x);
+    QParallelAnimationGroup *group = new QParallelAnimationGroup;
+    group->addAnimation(anim_v);
+    group->addAnimation(anim_h);
+    group->start(QAbstractAnimation::DeleteWhenStopped);
+}
 

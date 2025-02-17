@@ -18,11 +18,13 @@ public:
     void getCoupLinks(uint id);
     void createLink(/*uint id, */QMap<QString, QVariant>);
     void deleteLink(uint id);
+    void getDataPaint(uint id);
 
 signals:
     void sigAuthResult(bool);
     void sigDataToObj(ObjType, uint, QJsonDocument);
     void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
+    void sigCoupPaint(uint, QJsonDocument);
 
 private:
     RestAccessManager *_ram;

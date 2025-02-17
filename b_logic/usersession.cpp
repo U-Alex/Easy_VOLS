@@ -114,6 +114,8 @@ void UserSession::setData(ObjType objType, QMap<int, QList<QVariant>> data)
                 param.insert("id", key);
                 param.insert("coord_x", value.at(0).toInt());
                 param.insert("coord_y", value.at(1).toInt());
+                param.insert("parrent", value.at(2).toInt());
+                param.insert("parr_type", value.at(3).toInt());
                 params << param;
             }
             break;
@@ -209,6 +211,33 @@ void UserSession::deleteLink(uint id)
 }
 
 //--------------------------------------------------------------------------
+
+void UserSession::getDataPaint(uint id)
+{
+    RestAccessManager::ResponseCallback callback = [this, id]
+            (QNetworkReply* reply, bool success) {
+        if (success) {
+            QJsonParseError err;
+            auto json = QJsonDocument::fromJson(reply->readAll(), &err);
+            if (!err.error) {
+//                emit sigDataToObj(ObjType::o_polyline, 0, json);   //id=0
+                emit sigCoupPaint(id, json);
+            }
+//            else emit(error...);
+//        qDebug() << "json:" << json;
+        }
+    };
+    QString api = QString("/api/vols/coup/%1/paint/").arg(id);
+    QUrlQuery param("");
+
+    _ram->get(api, param, callback);
+}
+
+
+
+
+
+
 
 
 

@@ -24,11 +24,8 @@ public:
     explicit MapManager(Config *ref_conf, UserSession *us, QWidget *parent = nullptr);
     ~MapManager();
 
-//    MapScene       *scene;
-//    MapView        *mapView;
-//    ObjFab         *objFab;
-
 public slots:
+//    void start();
 //    void toCoupOnCenter(int coup_id);
 //    void showItemsHop(int p_id);
 
@@ -53,7 +50,6 @@ private:
 
     ObjPwcont      *last_pw_cont = nullptr;
     QPoint          last_pw_cont_pos;
-
     ObjCoup        *last_coup = nullptr;
     QPoint          last_coup_pos;
 

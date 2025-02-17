@@ -18,9 +18,10 @@ public:
 
 
 public slots:
-    void fr_P_repaint(short);
-    void next_coup(int c_id);
+    void nextCoup(uint, QPoint);
 
+signals:
+    void sigToMapCoup(/*uint, */QPoint);
 
 private:
     Ui::CoupManager *ui;
@@ -35,7 +36,7 @@ private:
 private slots:
     void on_pb_L_toggled(bool checked);
     void on_pb_R_toggled(bool checked);
-
+    void fr_P_repaint(short);
 
 
 };

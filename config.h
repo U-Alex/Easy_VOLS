@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <QSettings>
+#include <QSize>
 
 class Config
 {
@@ -24,8 +25,20 @@ public:
 
 
 
+//coupPaint
+    //offset
+    int but_V_offset =                   20;
+    QVector<int> but_ext_coup_H_offset = {0,1230};
+
+    QVector<int> lab_ext_coup_H_offset = {40,1020};
+
+    //size
+    QSize but_ext_coup_size =            {40,20};
+
+    QSize lab_ext_coup_size =            {210,18};
 
 
+    //link offset
 
 
 private:

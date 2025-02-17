@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     userSession = new UserSession(this);
     QObject::connect(userSession, &UserSession::sigAuthResult, this, &MainWindow::slotAuthResult);
     ui->but_logout->hide();
-    slotAuthResult(true);   //
+//    slotAuthResult(true);   //
 }
 
 MainWindow::~MainWindow()
