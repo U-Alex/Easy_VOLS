@@ -298,7 +298,7 @@ void MapManager::slotCoupClick(QGraphicsItem *ref_item)
         }
     }
     else if (coupManager != nullptr)
-        coupManager->nextCoup(item->data((int)Idx::o_id).toUInt(), QPoint(0,0));
+        coupManager->nextCoup(item->data((int)Idx::o_id).toUInt());
 //        emit showWelding(item->data((int)Idx::o_id).toUInt());
 }
 

@@ -30,7 +30,7 @@
   <widget class="QLabel" name="label_head">
    <property name="geometry">
     <rect>
-     <x>327</x>
+     <x>320</x>
      <y>0</y>
      <width>630</width>
      <height>28</height>

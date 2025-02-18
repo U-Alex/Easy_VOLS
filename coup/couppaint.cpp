@@ -69,7 +69,7 @@ void CoupPaint::prepareCab()
         v_slot[v_pos] += 2;
         v_slot[v_pos] += cab_links[idx]["cab_capa"].toInt();
     }
-qDebug() << "v_slot"<< v_slot;
+//qDebug() << "v_slot"<< v_slot;
     createBut();
     createLinks();
 }

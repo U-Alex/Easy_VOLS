@@ -20,7 +20,7 @@ public:
 
 
 //coupManager
-    int frame_LR_width =    260;
+    int frame_LR_width =    280;
 
 
 //coupPaint

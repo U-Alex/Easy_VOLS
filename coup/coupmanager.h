@@ -6,6 +6,7 @@
 #include "config.h"
 #include "b_logic/usersession.h"
 #include "coup/couppaint.h"
+#include "coup/couppaintext.h"
 
 namespace Ui { class CoupManager; }
 
@@ -18,10 +19,11 @@ public:
 
 
 public slots:
-    void nextCoup(uint, QPoint);
+    void slotNextCoup(uint, QPoint);
+    void nextCoup(uint);
 
 signals:
-    void sigToMapCoup(/*uint, */QPoint);
+    void sigToMapCoup(QPoint);
 
 private:
     Ui::CoupManager *ui;
@@ -29,8 +31,10 @@ private:
     UserSession     *userSession = nullptr;
 
     CoupPaint       *coupPaint = nullptr;
+    CoupPaintExt    *coupPaintExtL = nullptr;
+    CoupPaintExt    *coupPaintExtR = nullptr;
 
-    int              coup_id = 0;
+    uint              coup_id = 0;
 
 
 private slots:
@@ -39,6 +43,7 @@ private slots:
     void fr_P_repaint(short);
 
 
+    void on_pb_update_clicked();
 };
 
 #endif // COUPMANAGER_H
