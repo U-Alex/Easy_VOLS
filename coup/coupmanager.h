@@ -2,6 +2,7 @@
 #define COUPMANAGER_H
 
 #include <QWidget>
+//#include <QJsonDocument>
 
 #include "config.h"
 #include "b_logic/usersession.h"
@@ -21,6 +22,7 @@ public:
 public slots:
     void slotNextCoup(uint, QPoint);
     void nextCoup(uint);
+    void slotNextCoupExt(QStringList, QStringList);
 
 signals:
     void sigToMapCoup(QPoint);
@@ -34,7 +36,8 @@ private:
     CoupPaintExt    *coupPaintExtL = nullptr;
     CoupPaintExt    *coupPaintExtR = nullptr;
 
-    uint              coup_id = 0;
+    uint             coup_id = 0;
+    QStringList      cab_L, cab_R;
 
 
 private slots:

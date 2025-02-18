@@ -21,7 +21,8 @@ public slots:
 
 signals:
 //    void fr_repaint(short);
-    void nextCoup(int, QPoint);
+    void sigNextCoup(int, QPoint);
+    void sigNextCoupExt(QStringList, QStringList);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -47,6 +48,7 @@ private:
 private slots:
     void printHead(uint, QJsonValue, QJsonValue);
     void prepareCab();
+    void postCabList();
     void createBut();
     void createLinks();
 

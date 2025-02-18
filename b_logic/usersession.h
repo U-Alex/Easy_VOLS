@@ -13,18 +13,20 @@ public:
     ~UserSession();
 
     void auth(QString login, QString pass);
-    void getData(ObjType objType, uint id = 0);
-    void setData(ObjType objType, QMap<int, QList<QVariant>>);
+    void getData(ObjType, uint id = 0);
+    void setData(ObjType, QMap<int, QList<QVariant>>);
     void getCoupLinks(uint id);
     void createLink(/*uint id, */QMap<QString, QVariant>);
     void deleteLink(uint id);
     void getDataPaint(uint id);
+    void getDataPaintExt(uint id, QStringList cab_list, short fr_pos);
 
 signals:
     void sigAuthResult(bool);
     void sigDataToObj(ObjType, uint, QJsonDocument);
     void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
     void sigCoupPaint(uint, QJsonDocument);
+    void sigCoupPaintExt(uint, short, QJsonDocument);
 
 private:
     RestAccessManager *_ram;

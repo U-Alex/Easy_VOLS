@@ -22,16 +22,23 @@ void CoupManager::slotNextCoup(uint c_id, QPoint pos)
     emit sigToMapCoup(pos);
 }
 
+void CoupManager::slotNextCoupExt(QStringList c_l, QStringList c_r)
+{
+    cab_L = c_l; cab_R = c_r;
+    fr_P_repaint(2);
+}
+
 void CoupManager::nextCoup(uint c_id)
 {
     coup_id = c_id;
     if (coupPaint != nullptr) coupPaint->deleteLater();
     coupPaint = new CoupPaint(conf,this);
     ui->gridLayout->addWidget(coupPaint, 0, 1);
-    QObject::connect(coupPaint, &CoupPaint::nextCoup, this, &CoupManager::slotNextCoup);
+    QObject::connect(coupPaint, &CoupPaint::sigNextCoup, this, &CoupManager::slotNextCoup);
+    QObject::connect(coupPaint, &CoupPaint::sigNextCoupExt, this, &CoupManager::slotNextCoupExt);
     QObject::connect(userSession, &UserSession::sigCoupPaint, coupPaint, &CoupPaint::slotCoupPaint);
     userSession->getDataPaint(c_id);
-    fr_P_repaint(2);
+//    fr_P_repaint(2);
 }
 
 void CoupManager::fr_P_repaint(short fr_pos)
@@ -41,6 +48,9 @@ void CoupManager::fr_P_repaint(short fr_pos)
 //        coupPaintExtL = new CoupPaintExtL(conf, orm, coup_id, c_paint->cab_n_L, 0, ui->frame_L);
         coupPaintExtL = new CoupPaintExt(conf, this);
         ui->gridLayout->addWidget(coupPaintExtL, 0, 0);
+//        QVector<int> cab_list = coupPaint->getCabList(0);
+        QObject::connect(userSession, &UserSession::sigCoupPaintExt, coupPaintExtL, &CoupPaintExt::slotCoupPaintExt);
+        userSession->getDataPaintExt(coup_id, cab_L, fr_pos);
 //        connect(c_ext_L, &sh_Coup_ext::show_hop, this, &sh_Coup::show_hop);
     }
     if ((fr_pos == 1 || fr_pos == 2) && ui->pb_R->isChecked()) {
@@ -48,6 +58,9 @@ void CoupManager::fr_P_repaint(short fr_pos)
 //        coupPaintExtR = new CoupPaintExtR(conf, orm, coup_id, c_paint->cab_n_R, 1, ui->frame_R);
         coupPaintExtR = new CoupPaintExt(conf, this);
         ui->gridLayout->addWidget(coupPaintExtR, 0, 2);
+//        QVector<int> cab_list = coupPaint->getCabList(1);
+        QObject::connect(userSession, &UserSession::sigCoupPaintExt, coupPaintExtR, &CoupPaintExt::slotCoupPaintExt);
+        userSession->getDataPaintExt(coup_id, cab_R, fr_pos);
 //        connect(c_ext_R, &sh_Coup_ext::show_hop, this, &sh_Coup::show_hop);
     }
 }
@@ -55,10 +68,10 @@ void CoupManager::fr_P_repaint(short fr_pos)
 void CoupManager::on_pb_L_toggled(bool checked)
 {
     QPushButton *bp = static_cast<QPushButton*>(sender());
-//    if (coupPaint == nullptr) {
-//        bp->setChecked(0);
-//        return;
-//    }
+    if (coupPaint == nullptr) {
+        bp->setChecked(0);
+        return;
+    }
     int frame_LR_width = conf->frame_LR_width;
     if (checked) {
         ui->frame_head_L->setFixedWidth(frame_LR_width + 20);
@@ -86,10 +99,10 @@ void CoupManager::on_pb_L_toggled(bool checked)
 void CoupManager::on_pb_R_toggled(bool checked)
 {
     QPushButton *bp = static_cast<QPushButton*>(sender());
-//    if (coupPaint == nullptr) {
-//        bp->setChecked(0);
-//        return;
-//    }
+    if (coupPaint == nullptr) {
+        bp->setChecked(0);
+        return;
+    }
     int frame_LR_width = conf->frame_LR_width;
     if (checked) {
         ui->frame_head_R->setFixedWidth(frame_LR_width + 36);

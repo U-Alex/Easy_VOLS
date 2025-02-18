@@ -70,8 +70,21 @@ void CoupPaint::prepareCab()
         v_slot[v_pos] += cab_links[idx]["cab_capa"].toInt();
     }
 //qDebug() << "v_slot"<< v_slot;
+    postCabList();
     createBut();
     createLinks();
+}
+
+void CoupPaint::postCabList()
+{
+//    QVector<int> res_l, res_r;
+//    for (auto &rec : cab_slot_L) res_l << rec["cable_num"].toInt();
+//    for (auto &rec : cab_slot_R) res_r << rec["cable_num"].toInt();
+//    emit sigNextCoupExt(res_l, res_r);
+    QStringList res_l, res_r;
+    for (auto &rec : cab_slot_L) res_l << QString("%1").arg(rec["cable_num"].toInt());
+    for (auto &rec : cab_slot_R) res_r << QString("%1").arg(rec["cable_num"].toInt());
+    emit sigNextCoupExt(res_l, res_r);
 }
 
 void CoupPaint::createBut()
@@ -349,7 +362,7 @@ void CoupPaint::but_ext_coup_clicked()
     int coup_id = bext->objectName().mid(15).toUInt(&ok, 10);
     for (auto &ob : cab_links) {
         if (ob["id"].toInt() == coup_id) {
-            emit nextCoup(coup_id, {ob["coord_x"].toInt(), ob["coord_y"].toInt()});
+            emit sigNextCoup(coup_id, {ob["coord_x"].toInt(), ob["coord_y"].toInt()});
             break;
         }
     }

@@ -13,3 +13,8 @@ CoupPaintExt::~CoupPaintExt()
 {
     delete ui;
 }
+
+void CoupPaintExt::slotCoupPaintExt(uint c_id, short fr_pos, QJsonDocument json)
+{
+qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos<<json;
+}

@@ -233,7 +233,27 @@ void UserSession::getDataPaint(uint id)
     _ram->get(api, param, callback);
 }
 
+void UserSession::getDataPaintExt(uint id, QStringList cab_list, short fr_pos)
+{
+    RestAccessManager::ResponseCallback callback = [this, id, fr_pos]
+            (QNetworkReply* reply, bool success) {
+        if (success) {
+            QJsonParseError err;
+            auto json = QJsonDocument::fromJson(reply->readAll(), &err);
+            if (!err.error) {
+//                emit sigDataToObj(ObjType::o_polyline, 0, json);   //id=0
+                emit sigCoupPaintExt(id, fr_pos, json);
+            }
+//            else emit(error...);
+//        qDebug() << "json:" << json;
+        }
+    };
+//    std::transform(cab_list.begin(), cab_list.end(), std::back_inserter(lst), [](int i) { return QChar('0' + i); });
+    QString api = QString("/api/vols/coup/%1/paintext/%2").arg(id).arg(cab_list.join("-"));
+    QUrlQuery param("");
 
+    _ram->get(api, param, callback);
+}
 
 
 
