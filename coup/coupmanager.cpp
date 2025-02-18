@@ -46,6 +46,7 @@ void CoupManager::fr_P_repaint(short fr_pos)
 //        connect(c_ext_R, &sh_Coup_ext::show_hop, this, &sh_Coup::show_hop);
 //    }
 //    ui->frame_P->setFixedHeight(this->coupPaint->height());
+    qDebug() << "this->coupPaint->height()"<<this->coupPaint->height();
     ui->scrollAreaWidgetContents->setFixedHeight(this->coupPaint->height() + 10);
 //    ui->frame_L->setFixedHeight(this->coupPaint->height());
 //    ui->frame_R->setFixedHeight(this->coupPaint->height());

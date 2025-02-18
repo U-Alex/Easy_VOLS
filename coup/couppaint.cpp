@@ -1,14 +1,14 @@
 #include "couppaint.h"
 #include "ui_couppaint.h"
 
+#include <QPainter>
 #include <QPushButton>
+#include <QPen>
 
-
-CoupPaint::CoupPaint(Config *ref_conf, /*UserSession *us, */QWidget *parent) :
+CoupPaint::CoupPaint(Config *ref_conf, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::CoupPaint),
     conf(ref_conf)
-//    userSession(us)
 {
     ui->setupUi(this);
 }
@@ -35,6 +35,12 @@ void CoupPaint::slotCoupPaint(uint c_id, QJsonDocument json)
     std::sort(cab_links.begin(),cab_links.end(),[]
                 (const QJsonObject& a, const QJsonObject& b)->bool{return a["cab_capa"].toInt() > b["cab_capa"].toInt();});
 //qDebug() << "cab_links"<< cab_links.length();
+    auto _crp = json["cross_p"];
+    for (auto i = 0; !_crp[i].isUndefined() ; ++i) {
+        cross_p.insert(_crp[i][0].toInt(), {_crp[i][1].toInt(), _crp[i][2].toString()});
+    }
+qDebug() << "cross_p.size()"<< cross_p.size();
+
     prepareCab();
 }
 
@@ -65,6 +71,7 @@ void CoupPaint::prepareCab()
     }
 qDebug() << "v_slot"<< v_slot;
     createBut();
+    createLinks();
 }
 
 void CoupPaint::createBut()
@@ -77,20 +84,21 @@ void CoupPaint::createBut()
     QPushButton    *pcmd;
     QList<QString>  foll = {"<<<",">>>"};
     QLabel         *lbl_ext, *lbl_f, *lbl_cr, *lbl_m;
+    QPoint          but_xy, lab_xy, cross_xy;
 
     for (short v_pos = 0; v_pos < 2; ++v_pos) {
         if (v_pos == 0) curr_len = cab_slot_L.length();
         else            curr_len = cab_slot_R.length();
-qDebug() << "v_slot---" << v_pos;
+//qDebug() << "v_slot---" << v_pos;
         for (int ncab = 0; ncab < curr_len; ++ncab) {
             mod_s = 0;
             if (v_pos == 0) {curr_num = cab_slot_L[ncab]["cable_num"].toInt();
                              curr_type = cab_slot_L[ncab]["cab_name"].toString();}
             else            {curr_num = cab_slot_R[ncab]["cable_num"].toInt();
                              curr_type = cab_slot_R[ncab]["cab_name"].toString();}
-qDebug() << curr_num << curr_type;
+//qDebug() << curr_num << curr_type;
             QList<QJsonObject> coup_pn;
-            foreach (QJsonObject row, coup_ports) {
+            foreach (QJsonObject row, coup_ports) {         //    TODO ->for ( : )
                 if (row["cable_num"].toInt() == curr_num)
                     coup_pn << row;
             }
@@ -123,36 +131,248 @@ qDebug() << curr_num << curr_type;
 
             v_slot[v_pos]++;
 
+            pcmd = new QPushButton(curr_type, this);
+            pcmd->setObjectName(QString("but_c_ab_%1").arg(curr_num));
+            pcmd->setFocusPolicy(Qt::NoFocus);
+            pcmd->setMinimumSize(conf->but_cab_type_size); pcmd->setMaximumSize(conf->but_cab_type_size);
+            pcmd->move(conf->but_cab_type_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
+            pcmd->setVisible(1);
+            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
+            pcmd = new QPushButton("↑↑", this);
+            pcmd->setObjectName(QString("but_c_up_%1").arg(curr_num));
+            pcmd->setFocusPolicy(Qt::NoFocus);
+            pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
+            pcmd->move(conf->but_cab_up_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
+            pcmd->setVisible(1);
+            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
+            pcmd = new QPushButton("↔", this);
+            pcmd->setObjectName(QString("but_c_lr_%1").arg(curr_num));
+            pcmd->setFocusPolicy(Qt::NoFocus);
+            pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
+            pcmd->move(conf->but_cab_lr_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
+            pcmd->setVisible(1);
+            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
+            for (int row = 0; row < coup_pn.length(); ++row) {
+                v_slot[v_pos]++;
+                but_xy = QPoint(conf->but_fiber_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
+                p_id = coup_pn.at(row)["id"].toInt();
+                ports.insert(p_id, but_xy);
+
+                pcmd = new QPushButton(QString("%1").arg(coup_pn.at(row)["fiber_num"].toInt()), this);
+                if (! coup_pn.at(row)["p_valid"].toBool())
+                    pcmd->setStyleSheet(QString("background-color: %1").arg("gray"));
+                pcmd->setObjectName(QString("but_p_%1").arg(p_id));
+                pcmd->setFocusPolicy(Qt::NoFocus);
+                pcmd->setMinimumSize(conf->but_fiber_size); pcmd->setMaximumSize(conf->but_fiber_size);
+                pcmd->move(but_xy);
+                pcmd->setVisible(1);
+                pcmd->setCheckable(1);
+                QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_fiber_clicked()));
+
+                lab_xy = QPoint(conf->lab_color_fiber_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1);
+                lbl_f = new QLabel(conf->ru_color_list.value(coup_pn.at(row)["fiber_color"].toString()), this);
+                lbl_f->setObjectName(QString("lab_p_%1").arg(p_id));
+                lbl_f->setFixedSize(conf->lab_color_fiber_size);
+                lbl_f->setAlignment(Qt::AlignHCenter);
+                if (f_color) lbl_f->setStyleSheet(QString("background-color: %1").arg(coup_pn.at(row)["fiber_color"].toString()));
+                else         lbl_f->setStyleSheet(QString("background-color: beige"));
+                lbl_f->move(lab_xy);
+                lbl_f->setVisible(1);
+
+                if (mod_s != coup_pn.at(row)["mod_num"].toInt()) {
+                    mod_s = coup_pn.at(row)["mod_num"].toInt();
+                    lab_xy = QPoint(conf->lab_color_mod_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1);
+                    if (f_color) lbl_m = new QLabel(QString("%1").arg(coup_pn.at(row)["mod_num"].toInt()), this);
+                    else         lbl_m = new QLabel(conf->ru_color_list.value(coup_pn.at(row)["mod_color"].toString()).left(1), this);
+                    lbl_m->setObjectName(QString("lab_m_%1").arg(p_id));
+                    lbl_m->setFixedSize(conf->lab_color_mod_size);
+                    lbl_m->setAlignment(Qt::AlignHCenter);
+                    if (f_color) lbl_m->setStyleSheet(QString("background-color: %1").arg(coup_pn.at(row)["mod_color"].toString()));
+                    else         lbl_m->setStyleSheet(QString("background-color: beige"));
+                    lbl_m->move(lab_xy);
+                    lbl_m->setVisible(1);
+                }
+                else {
+                    lbl_m->setFixedHeight(lbl_m->height() + conf->but_V_offset);
+                }
+
+                if (coup_pn.at(row)["int_c_dest"].toInt() == 1) {
+                    int int_c_id = coup_pn.at(row)["int_c_id"].toInt();
+                    cross_xy = QPoint(conf->but_cross_port_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
+
+                    pcmd = new QPushButton(QString("%1").arg(cross_p.value(int_c_id).first), this);
+                    pcmd->setObjectName(QString("but_cr_%1").arg(int_c_id));
+                    pcmd->setFocusPolicy(Qt::NoFocus);
+                    pcmd->setMinimumSize(conf->but_fiber_size); pcmd->setMaximumSize(conf->but_fiber_size);
+                    pcmd->move(cross_xy);
+                    pcmd->setVisible(1);
+                    pcmd->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
+                    QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
+                    lab_xy = QPoint(conf->lab_cross_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1);
+
+                    lbl_cr = new QLabel(cross_p.value(int_c_id).second, this);
+                    lbl_cr->setObjectName("lab_p_cross");
+                    lbl_cr->setFixedSize(conf->lab_cross_size);
+                    lbl_cr->setAlignment(Qt::AlignHCenter);
+                    lbl_cr->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
+                    lbl_cr->move(lab_xy);
+                    lbl_cr->setVisible(1);
+                }
+            }
         }
-
-
     }
-
-
-
+    int fr_size = std::max(v_slot[0],v_slot[1]) * conf->but_V_offset + conf->but_V_offset * 3;
+    this->setFixedHeight(fr_size);
+    qDebug() << "fr_size" << fr_size;
 }
 
 void CoupPaint::createLinks()
 {
+    links.clear();
+    links_pen.clear();
+    links_sel.clear();
+    circle0.clear();
+    circle1.clear();
 
+    QColor link_col;
+    Qt::PenStyle link_line;
+    QMap<int, QPoint> ports2 = QMap(ports);
+    short v_pos, v_pos2;
+    QJsonObject coup_p;
+    QPolygon polygon;
+    QPoint b_cntr = QPoint(conf->but_fiber_size.width()/2, conf->but_fiber_size.height()/2);
+    int dst_id;
+    QPoint dst_crd, pnt2, pnt3;
+    QRect pnt2c, pnt3c;
+    QList<int> v_slot = {0,0};
+
+    QMap<int, QPoint>::iterator curr_p = ports2.begin();
+    while (curr_p != ports2.end()) {
+        if (curr_p.value().x() == conf->but_fiber_H_offset[0]) v_pos = 0;
+        else                                                   v_pos = 1;
+
+        for (auto &row : coup_ports) {
+            if (row["id"].toInt() == curr_p.key())
+                coup_p = row;
+        }
+        if (coup_p["int_c_id"].toInt() == 0) {
+            polygon << curr_p.value() + b_cntr
+                    << (curr_p.value() + QPoint(conf->link_0_offset[v_pos], 0)) + b_cntr ;
+            links << polygon;
+            polygon.clear();
+            circle0 << QRect(curr_p.value() + QPoint(conf->link_0_offset[v_pos], 0) + QPoint(8,8), QSize(4,4));
+        } else
+            if (coup_p["int_c_dest"].toInt() == 1) {
+                polygon << curr_p.value() + b_cntr
+                        << curr_p.value() + b_cntr + QPoint(conf->link_3_offset[v_pos], 0);
+                links << polygon;
+                polygon.clear();
+            } else {
+                dst_id = coup_p["int_c_id"].toInt();
+                dst_crd = ports2.find(dst_id).value();
+                if (dst_crd.x() == conf->but_fiber_H_offset[0]) v_pos2 = 0;
+                else                                            v_pos2 = 1;
+                if (v_pos ^ v_pos2) {
+                    pnt2 = curr_p.value() + b_cntr + QPoint(conf->link_1_offset[v_pos], 0) ;
+                    pnt3 = dst_crd + b_cntr + QPoint(conf->link_1_offset[v_pos2], 0) ;
+                    pnt2c = QRect(pnt2 - QPoint(1,1), QSize(3,3));
+                    pnt3c = QRect(pnt3 - QPoint(1,1), QSize(3,3));
+                }
+                else {
+                    pnt2 = curr_p.value() + b_cntr + QPoint(conf->link_2_offset[v_pos] + v_slot[v_pos], 0) ;
+                    pnt3 = dst_crd + b_cntr + QPoint(conf->link_2_offset[v_pos2] + v_slot[v_pos], 0) ;
+                    pnt2c = QRect(curr_p.value() + b_cntr + QPoint(conf->link_0_offset[v_pos], 0) - QPoint(1,1), QSize(3,3));
+                    pnt3c = QRect(dst_crd + b_cntr + QPoint(conf->link_0_offset[v_pos2], 0) - QPoint(1,1), QSize(3,3));
+                    if (v_pos2) v_slot[v_pos] -= conf->link_v_slot_step;
+                    else        v_slot[v_pos] += conf->link_v_slot_step;
+                }
+                polygon << curr_p.value() + b_cntr;
+                polygon << pnt2 << pnt3;
+                polygon << dst_crd + b_cntr ;
+                links << polygon;
+                polygon.clear();
+                ports2.erase(ports2.find(dst_id));
+
+                if (coup_p["int_c_status"].toInt() == 2)
+                    circle1 << pnt2c << pnt3c;
+            }
+        curr_p = ports2.erase(curr_p);
+
+        if (coup_p["int_c_status"].toInt() == 1) link_col = Qt::blue;
+        else                                     link_col = Qt::black;
+        if (coup_p["changed"].toBool() == 1) link_line = Qt::DashLine;
+        else                                 link_line = Qt::SolidLine;
+
+        links_pen << QPen(link_col, 1, link_line/*, Qt::RoundCap, Qt::RoundJoin*/);
+    }
 }
 
+void CoupPaint::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event)
+    QPainter painter(this);
 
+    painter.setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::FlatCap));
+    painter.setBrush(Qt::white);
+    QRect rect1;                        /////////////////////////////////
+    rect1.setSize(QSize(649, this->height()-40));
+    rect1.moveTo(310, 30);
+    painter.drawRect(rect1);
+
+    painter.setBrush(Qt::NoBrush);
+
+    for (int i=0; i<links.count(); i++) {
+        painter.setPen(links_pen.at(i));
+        painter.drawPolyline(links.at(i));
+    }
+    painter.setPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::FlatCap));
+    for (QPolygon &plg : links_sel) {
+        painter.drawPolyline(plg);
+    }
+    painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
+    for (QRect &cic : circle0) {
+        painter.drawEllipse(cic);
+    }
+    painter.setPen(QPen(Qt::black, 2, Qt::SolidLine));
+    for (QRect &cic : circle1) {
+        painter.drawEllipse(cic);
+    }
+}
 
 void CoupPaint::but_ext_coup_clicked()
 {
     QPushButton *bext = static_cast<QPushButton*>(sender());
     bool ok;
     int coup_id = bext->objectName().mid(15).toUInt(&ok, 10);
-    foreach (auto ob, cab_links) {
+    for (auto &ob : cab_links) {
         if (ob["id"].toInt() == coup_id) {
             emit nextCoup(coup_id, {ob["coord_x"].toInt(), ob["coord_y"].toInt()});
             break;
         }
     }
-//qWarning() << "but_ext_coup_clicked:" << bext->objectName() << "coup_id:" << coup_id;
+//qDebug() << "but_ext_coup_clicked:" << bext->objectName() << "coup_id:" << coup_id;
 //    emit nextCoup(coup_id);
+}
+
+void CoupPaint::but_cab_clicked()
+{
+    QPushButton *bcab = static_cast<QPushButton*>(sender());
+qDebug() << "but_cab_clicked: " << bcab->objectName() << bcab->pos();
+
+
+
+
+}
+
+void CoupPaint::but_fiber_clicked()
+{
+    QPushButton *bp = static_cast<QPushButton*>(sender());
+qWarning() << "but_fiber_clicked:" << bp->objectName() << bp->pos() << bp->isChecked();
+
+
+
+
 }

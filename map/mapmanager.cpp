@@ -36,11 +36,11 @@ MapManager::MapManager(Config *ref_conf, UserSession *us, QWidget *parent) :
 //    ui->map_frame_temp->deleteLater();                   //
     ui->map_Layout->addWidget(mapView, 0, 1);
 
-    QImageReader::setAllocationLimit(2048);
-    QPixmap image(conf->map_f_name);
-    map_size = image.size();
-    pix_map = scene->addPixmap(image);
-    pix_map ->setData((int)Idx::label, "pix_map");
+//    QImageReader::setAllocationLimit(2048);
+//    QPixmap image(conf->map_f_name);
+//    map_size = image.size();
+//    pix_map = scene->addPixmap(image);
+//    pix_map ->setData((int)Idx::label, "pix_map");
 
     mapView->centerOn(QPointF(9000, 15378));        //
 //    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
