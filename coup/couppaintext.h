@@ -20,11 +20,18 @@ public:
 public slots:
     void slotCoupPaintExt(uint, short, QJsonDocument);
 
+signals:
+    void showHop(int p_id);
+
 private:
     Ui::CoupPaintExt *ui;
     Config           *conf = nullptr;
     uint              coup_id = 0;
     short             fr_pos;
+
+private slots:
+    void but_hop_clicked();
+    void but_parr_clicked();
 
 };
 
