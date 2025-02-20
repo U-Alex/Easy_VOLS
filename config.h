@@ -35,10 +35,10 @@ public:
     QList<int> but_fiber_H_offset =       {150,1100};
     QList<int> but_cross_port_H_offset =  {200,1050};
 
-    QList<int> lab_ext_coup_H_offset =    {40,1020};
+    QList<int> lab_ext_coup_H_offset =    {40,990};
     QList<int> lab_color_fiber_H_offset = {30,1120};
     QList<int> lab_color_mod_H_offset =   {10,1240};
-    QList<int> lab_cross_H_offset =       {220,970};
+    QList<int> lab_cross_H_offset =       {220,920};
 
     //size
     QSize but_ext_coup_size =             {40,20};
@@ -46,20 +46,37 @@ public:
     QSize but_cab_move_size =             {20,20};
     QSize but_fiber_size =                {20,20};
 
-    QSize lab_ext_coup_size =             {210,18};
+    QSize lab_ext_coup_size =             {240,18};
     QSize lab_color_fiber_size =          {118,18};
     QSize lab_color_mod_size =            {18,18};
-    QSize lab_cross_size =                {80,18};
+    QSize lab_cross_size =                {130,18};
 
     //link offset
     int link_v_slot_step =                 6;
 
-    QList<int> link_0_offset =            {160,-160};
-    QList<int> link_1_offset =            {300,-300};
-    QList<int> link_2_offset =            {170,-170};
+    QList<int> link_0_offset =            {210,-210};
+    QList<int> link_1_offset =            {260,-260};
+    QList<int> link_2_offset =            {230,-230};
     QList<int> link_3_offset =            {50,-50};
 
+//coupPaintExt
+    //offset
+    QList<QString> color_coup_ext;
+    QList<QString> color_cross;
 
+    QList<int> but_hop_H_offset =          {10,260};
+    QList<int> but_parrent_H_offset =      {80,10};
+
+    QList<int> lab_up_info_H_offset =      {80,10};
+    QList<int> lab_color_cr1_H_offset =    {40,236};
+    QList<int> lab_color_cr2_H_offset =    {56,220};
+
+    //size
+    QSize but_hop_size =                   {20,20};
+    QSize but_parrent_size =               {200,20};
+
+    QSize lab_up_info_size =               {200,18};
+    QSize lab_color_cr_size =              {14,18};
 
 
 private:

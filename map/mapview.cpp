@@ -61,13 +61,13 @@ void MapView::on_pb_antialiasing_toggled(bool checked)
 
 void MapView::on_pb_select_mode_toggled(bool checked)
 {
-    this->setDragMode(checked
+    this->setDragMode(!checked
                         ? QGraphicsView::RubberBandDrag
                         : QGraphicsView::ScrollHandDrag);
-    this->setTransformationAnchor(checked
+    this->setTransformationAnchor(!checked
                         ? QGraphicsView::AnchorUnderMouse
                         : QGraphicsView::AnchorViewCenter);
-    this->setInteractive(checked);
+    this->setInteractive(!checked);
 }
 
 void MapView::on_pb_print_clicked()

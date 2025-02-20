@@ -31,12 +31,12 @@ private:
     Ui::CoupManager *ui;
     Config          *conf = nullptr;
     UserSession     *userSession = nullptr;
+    uint             coup_id = 0;
 
     CoupPaint       *coupPaint = nullptr;
     CoupPaintExt    *coupPaintExtL = nullptr;
     CoupPaintExt    *coupPaintExtR = nullptr;
 
-    uint             coup_id = 0;
     QStringList      cab_L, cab_R;
 
 
@@ -44,7 +44,6 @@ private slots:
     void on_pb_L_toggled(bool checked);
     void on_pb_R_toggled(bool checked);
     void fr_P_repaint(short);
-
 
     void on_pb_update_clicked();
 };

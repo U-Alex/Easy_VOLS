@@ -21,6 +21,9 @@ Config::Config()
 
     str_to_map(setting->value("coup/ru_color_list").toString().split(_sep_), &ru_color_list);
 
+    color_coup_ext = setting->value("coup/color_coup_ext").toString().split(_sep_);
+    color_cross = setting->value("coup/color_cross").toString().split(_sep_);
+
     setting->deleteLater();
 }
 

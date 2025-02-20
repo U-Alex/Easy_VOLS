@@ -5,10 +5,11 @@
 #include <QPushButton>
 #include <QPen>
 
-CoupPaint::CoupPaint(Config *ref_conf, QWidget *parent) :
+CoupPaint::CoupPaint(Config *ref_conf, uint c_id, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::CoupPaint),
-    conf(ref_conf)
+    conf(ref_conf),
+    coup_id(c_id)
 {
     ui->setupUi(this);
 }
@@ -20,6 +21,8 @@ CoupPaint::~CoupPaint()
 
 void CoupPaint::slotCoupPaint(uint c_id, QJsonDocument json)
 {
+    if (coup_id != c_id) return;
+    else                 coup_id = 0;
 //    qDebug() << "slotCoupPaint c_id" << c_id;
     printHead(c_id, json["cur_coup"], json["coup_parr"]);
 
@@ -69,7 +72,7 @@ void CoupPaint::prepareCab()
         v_slot[v_pos] += 2;
         v_slot[v_pos] += cab_links[idx]["cab_capa"].toInt();
     }
-//qDebug() << "v_slot"<< v_slot;
+qDebug() << "v_slot"<< v_slot;
     postCabList();
     createBut();
     createLinks();
@@ -130,7 +133,7 @@ void CoupPaint::createBut()
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_ext_coup_size); pcmd->setMaximumSize(conf->but_ext_coup_size);
             pcmd->move(conf->but_ext_coup_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
-            pcmd->setVisible(1);
+            pcmd->setVisible(true);
             pcmd->setStyleSheet(QString("background-color: %1").arg("silver"));
             QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_ext_coup_clicked()));
 
@@ -138,18 +141,18 @@ void CoupPaint::createBut()
             lbl_ext->setObjectName(QString("lab_ext_coup_%1").arg(p_id));
             lbl_ext->setFixedSize(conf->lab_ext_coup_size);
             lbl_ext->setAlignment(Qt::AlignHCenter);
-            lbl_ext->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
+//            lbl_ext->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
             lbl_ext->move(QPoint(conf->lab_ext_coup_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1));
-            lbl_ext->setVisible(1);
+            lbl_ext->setVisible(true);
 
-            v_slot[v_pos]++;
+            ++v_slot[v_pos];
 
             pcmd = new QPushButton(curr_type, this);
             pcmd->setObjectName(QString("but_c_ab_%1").arg(curr_num));
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_cab_type_size); pcmd->setMaximumSize(conf->but_cab_type_size);
             pcmd->move(conf->but_cab_type_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
-            pcmd->setVisible(1);
+            pcmd->setVisible(true);
             QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
             pcmd = new QPushButton("↑↑", this);
@@ -157,7 +160,7 @@ void CoupPaint::createBut()
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
             pcmd->move(conf->but_cab_up_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
-            pcmd->setVisible(1);
+            pcmd->setVisible(true);
             QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
             pcmd = new QPushButton("↔", this);
@@ -165,7 +168,7 @@ void CoupPaint::createBut()
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
             pcmd->move(conf->but_cab_lr_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
-            pcmd->setVisible(1);
+            pcmd->setVisible(true);
             QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
             for (int row = 0; row < coup_pn.length(); ++row) {
@@ -181,8 +184,9 @@ void CoupPaint::createBut()
                 pcmd->setFocusPolicy(Qt::NoFocus);
                 pcmd->setMinimumSize(conf->but_fiber_size); pcmd->setMaximumSize(conf->but_fiber_size);
                 pcmd->move(but_xy);
-                pcmd->setVisible(1);
-                pcmd->setCheckable(1);
+                pcmd->setVisible(true);
+                pcmd->setCheckable(true);
+//                pcmd->setStyleSheet("border-radius: 9px; border-width: 1px; border-color: black; border-style: outset; background-color: beige;");
                 QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_fiber_clicked()));
 
                 lab_xy = QPoint(conf->lab_color_fiber_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1);
@@ -193,7 +197,7 @@ void CoupPaint::createBut()
                 if (f_color) lbl_f->setStyleSheet(QString("background-color: %1").arg(coup_pn.at(row)["fiber_color"].toString()));
                 else         lbl_f->setStyleSheet(QString("background-color: beige"));
                 lbl_f->move(lab_xy);
-                lbl_f->setVisible(1);
+                lbl_f->setVisible(true);
 
                 if (mod_s != coup_pn.at(row)["mod_num"].toInt()) {
                     mod_s = coup_pn.at(row)["mod_num"].toInt();
@@ -206,7 +210,7 @@ void CoupPaint::createBut()
                     if (f_color) lbl_m->setStyleSheet(QString("background-color: %1").arg(coup_pn.at(row)["mod_color"].toString()));
                     else         lbl_m->setStyleSheet(QString("background-color: beige"));
                     lbl_m->move(lab_xy);
-                    lbl_m->setVisible(1);
+                    lbl_m->setVisible(true);
                 }
                 else {
                     lbl_m->setFixedHeight(lbl_m->height() + conf->but_V_offset);
@@ -221,8 +225,8 @@ void CoupPaint::createBut()
                     pcmd->setFocusPolicy(Qt::NoFocus);
                     pcmd->setMinimumSize(conf->but_fiber_size); pcmd->setMaximumSize(conf->but_fiber_size);
                     pcmd->move(cross_xy);
-                    pcmd->setVisible(1);
-                    pcmd->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
+                    pcmd->setVisible(true);
+//                    pcmd->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
                     QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
                     lab_xy = QPoint(conf->lab_cross_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1);
 
@@ -230,16 +234,16 @@ void CoupPaint::createBut()
                     lbl_cr->setObjectName("lab_p_cross");
                     lbl_cr->setFixedSize(conf->lab_cross_size);
                     lbl_cr->setAlignment(Qt::AlignHCenter);
-                    lbl_cr->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
+//                    lbl_cr->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
                     lbl_cr->move(lab_xy);
-                    lbl_cr->setVisible(1);
+                    lbl_cr->setVisible(true);
                 }
             }
         }
     }
     int fr_size = std::max(v_slot[0],v_slot[1]) * conf->but_V_offset + conf->but_V_offset * 3;
     this->setFixedHeight(fr_size);
-    qDebug() << "fr_size" << fr_size;
+//    qDebug() << "fr_size" << fr_size;
 }
 
 void CoupPaint::createLinks()
@@ -330,10 +334,10 @@ void CoupPaint::paintEvent(QPaintEvent *event)
 
     painter.setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::FlatCap));
     painter.setBrush(Qt::white);
-    QRect rect1;                        /////////////////////////////////
-    rect1.setSize(QSize(649, this->height()-40));
-    rect1.moveTo(310, 30);
-    painter.drawRect(rect1);
+//    QRect rect1;
+    back_list.setSize(QSize(549, this->height()-40));
+    back_list.moveTo(360, 30);
+    painter.drawRect(back_list);
 
     painter.setBrush(Qt::NoBrush);
 

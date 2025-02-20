@@ -3,6 +3,8 @@
 
 #include <QFrame>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include "config.h"
 
@@ -12,7 +14,7 @@ class CoupPaintExt : public QFrame
 {
     Q_OBJECT
 public:
-    explicit CoupPaintExt(Config *ref_conf, QWidget *parent = nullptr);
+    explicit CoupPaintExt(Config *ref_conf, uint c_id, short _fr_pos, QWidget *parent = nullptr);
     ~CoupPaintExt();
 
 public slots:
@@ -21,6 +23,8 @@ public slots:
 private:
     Ui::CoupPaintExt *ui;
     Config           *conf = nullptr;
+    uint              coup_id = 0;
+    short             fr_pos;
 
 };
 

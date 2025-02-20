@@ -13,7 +13,7 @@ class CoupPaint : public QFrame
 {
     Q_OBJECT
 public:
-    explicit CoupPaint(Config *ref_conf, QWidget *parent = nullptr);
+    explicit CoupPaint(Config *ref_conf, uint c_id, QWidget *parent = nullptr);
     ~CoupPaint();
 
 public slots:
@@ -30,6 +30,7 @@ protected:
 private:
     Ui::CoupPaint *ui;
     Config        *conf = nullptr;
+    uint           coup_id = 0;
 
     QList<QJsonObject>              coup_ports;
     QList<QJsonObject>              cab_links;
@@ -43,7 +44,7 @@ private:
     QVector<QPen>       links_pen;
     QList<QPolygon>     links_sel;
     QVector<QRect>      circle0, circle1;
-
+    QRect               back_list;
 
 private slots:
     void printHead(uint, QJsonValue, QJsonValue);

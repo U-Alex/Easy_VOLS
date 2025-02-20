@@ -20,3 +20,7 @@ cab_width="1=1◀▶2=1◀▶4=1◀▶6=1◀▶8=2◀▶12=2◀▶16=2◀▶24=3
 [coup]
 
 ru_color_list="bisque=натуральный◀▶beige=неокрашенный◀▶#ff2222=красный◀▶yellow=жёлтый◀▶limegreen=зеленый◀▶royalblue=синий◀▶sienna=коричневый◀▶#565656=чёрный◀▶orange=оранжевый◀▶#b300ff=фиолетовый◀▶white=белый◀▶silver=серый◀▶mediumturquoise=бирюзовый◀▶hotpink=розовый◀▶cyan=голубой◀▶lime=лайм◀▶crimson=малиновый◀▶olive=оливковый◀▶tan=танин◀▶#44ff00=салатовый◀▶#cfb18a=бежевый◀▶#ff2323=красный+k.m◀▶#ffff01=жёлтый+k.m◀▶#33cd33=зеленый+k.m◀▶#426ae1=синий+k.m◀▶#882d18=коричневый+k.m◀▶#ff7f01=оранжевый+k.m"
+
+color_coup_ext="None◀▶palegreen◀▶khaki◀▶lightsteelblue◀▶blue◀▶silver"
+
+color_cross="None◀▶limegreen◀▶yellow◀▶hotpink◀▶cyan"
