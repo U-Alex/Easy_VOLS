@@ -53,6 +53,7 @@ void CoupManager::fr_P_repaint(short fr_pos)
         ui->gridLayout->addWidget(coupPaintExtL, 0, 0);
 //        QVector<int> cab_list = coupPaint->getCabList(0);
         QObject::connect(userSession, &UserSession::sigCoupPaintExt, coupPaintExtL, &CoupPaintExt::slotCoupPaintExt);
+        QObject::connect(coupPaintExtL, &CoupPaintExt::sigShowHopExt, this, &CoupManager::slotShowHopExt);
         userSession->getDataPaintExt(coup_id, cab_L, 0);
 //        connect(c_ext_L, &sh_Coup_ext::show_hop, this, &sh_Coup::show_hop);
     }
@@ -63,6 +64,7 @@ void CoupManager::fr_P_repaint(short fr_pos)
         ui->gridLayout->addWidget(coupPaintExtR, 0, 2);
 //        QVector<int> cab_list = coupPaint->getCabList(1);
         QObject::connect(userSession, &UserSession::sigCoupPaintExt, coupPaintExtR, &CoupPaintExt::slotCoupPaintExt);
+        QObject::connect(coupPaintExtR, &CoupPaintExt::sigShowHopExt, this, &CoupManager::slotShowHopExt);
         userSession->getDataPaintExt(coup_id, cab_R, 1);
 //        connect(c_ext_R, &sh_Coup_ext::show_hop, this, &sh_Coup::show_hop);
     }
@@ -128,3 +130,13 @@ void CoupManager::on_pb_update_clicked()
     if (coup_id) nextCoup(coup_id);
 }
 
+void CoupManager::slotShowHopExt(uint c_p_id)
+{
+    qDebug()<<"CoupManager::slotShowHopExt"<< c_p_id;
+    userSession->getShowHop(c_p_id);
+}
+
+//void CoupManager::slotShowHop(uint c_p_id, QJsonDocument json)
+//{
+//    qDebug()<<"CoupManager::slotShowHop"<< c_p_id << json;
+//}

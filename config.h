@@ -20,7 +20,7 @@ public:
 
 
 //coupManager
-    int frame_LR_width =    280;
+    int frame_LR_width =    300;
 
 
 //coupPaint
@@ -28,7 +28,7 @@ public:
 
     //offset
     int but_V_offset =                     20;
-    QVector<int> but_ext_coup_H_offset =  {0,1230};
+    QList<int> but_ext_coup_H_offset =    {0,1230};
     QList<int> but_cab_type_H_offset =    {0,1000};
     QList<int> but_cab_up_H_offset =      {270,980};
     QList<int> but_cab_lr_H_offset =      {290,960};
@@ -65,7 +65,7 @@ public:
     QList<QString> color_cross;
 
     QList<int> but_hop_H_offset =          {10,260};
-    QList<int> but_parrent_H_offset =      {80,10};
+    QList<int> but_parrent_H_offset =      {80,0};
 
     QList<int> lab_up_info_H_offset =      {80,10};
     QList<int> lab_color_cr1_H_offset =    {40,236};
@@ -73,7 +73,7 @@ public:
 
     //size
     QSize but_hop_size =                   {20,20};
-    QSize but_parrent_size =               {200,20};
+    QSize but_parrent_size =               {210,20};
 
     QSize lab_up_info_size =               {200,18};
     QSize lab_color_cr_size =              {14,18};

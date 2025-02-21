@@ -257,6 +257,26 @@ void UserSession::getDataPaintExt(uint id, QStringList cab_list, short fr_pos)
     _ram->get(api, param, callback);
 }
 
+void UserSession::getShowHop(uint c_p_id)
+{
+    RestAccessManager::ResponseCallback callback = [this/*, c_p_id*/]
+            (QNetworkReply* reply, bool success) {
+        if (success) {
+            QJsonParseError err;
+            auto json = QJsonDocument::fromJson(reply->readAll(), &err);
+            if (!err.error) {
+//                emit sigDataToObj(ObjType::o_polyline, 0, json);   //id=0
+                emit sigShowHopData(/*c_p_id, */json);
+            }
+//            else emit(error...);
+//        qDebug() << "json:" << json;
+        }
+    };
+    QString api = QString("/api/vols/show_hop/%1/").arg(c_p_id);
+    QUrlQuery param("");
+
+    _ram->get(api, param, callback);
+}
 
 
 

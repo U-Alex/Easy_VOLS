@@ -35,10 +35,10 @@ void ObjFab::slotDataToObj(ObjType objType, uint id, QJsonDocument json)
     }
 }
 
-void ObjFab::slotObjToData(ObjType, QVector<QGraphicsObject *>)
-{
+//void ObjFab::slotObjToData(ObjType, QVector<QGraphicsObject *>)
+//{
 
-}
+//}
 
 //--------------------------------------------------------------------------
 

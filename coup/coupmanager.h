@@ -23,6 +23,8 @@ public slots:
     void slotNextCoup(uint, QPoint);
     void nextCoup(uint);
     void slotNextCoupExt(QStringList, QStringList);
+    void slotShowHopExt(uint);
+//    void slotShowHop(uint, QJsonDocument);
 
 signals:
     void sigToMapCoup(QPoint);

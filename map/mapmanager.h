@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QGraphicsPixmapItem>
+#include <QJsonDocument>
 
 #include "config.h"
 #include "map/mapscene.h"
@@ -27,35 +28,35 @@ public:
 public slots:
 //    void start();
 //    void toCoupOnCenter(int coup_id);
-//    void showItemsHop(int p_id);
+    void slotShowHopData(/*uint, */QJsonDocument);
 
 signals:
 //    void cableClick(ObjPolyline *);
 //    void showWelding(uint coup_id);
 
 private:
-    Ui::MapManager *ui;
-    Config         *conf = nullptr;
-    UserSession    *userSession = nullptr;
-    MapScene       *scene = nullptr;
-    MapView        *mapView = nullptr;
-    ObjFab         *objFab = nullptr;
-    CoupManager    *coupManager = nullptr;
+    Ui::MapManager      *ui;
+    Config              *conf = nullptr;
+    UserSession         *userSession = nullptr;
+    MapScene            *scene = nullptr;
+    MapView             *mapView = nullptr;
+    ObjFab              *objFab = nullptr;
+    CoupManager         *coupManager = nullptr;
 
-    MapManagerEdit *fr_edit = nullptr;
-    MapManagerLink *fr_link = nullptr;
+    MapManagerEdit      *fr_edit = nullptr;
+    MapManagerLink      *fr_link = nullptr;
 
     QGraphicsPixmapItem *pix_map;
-    QSize           map_size;
+    QSize                map_size;
 
-    ObjPwcont      *last_pw_cont = nullptr;
-    QPoint          last_pw_cont_pos;
-    ObjCoup        *last_coup = nullptr;
-    QPoint          last_coup_pos;
+    ObjPwcont           *last_pw_cont = nullptr;
+    QPoint               last_pw_cont_pos;
+    ObjCoup             *last_coup = nullptr;
+    QPoint               last_coup_pos;
 
-    QVector<int>    queue_label;//
+    QVector<int> queue_label;//
     QMap<int, QList<QVariant>>  pwcont_upd_list, coup_upd_list;
-    QVector<int>    line_upd_id;
+    QVector<int>         line_upd_id;
 
 private slots:
     void showAllObj();

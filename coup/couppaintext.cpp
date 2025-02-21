@@ -23,11 +23,7 @@ void CoupPaintExt::slotCoupPaintExt(uint c_id, short _fr_pos, QJsonDocument json
 {
     if (coup_id == c_id && fr_pos == _fr_pos) coup_id = 0;
     else return;
-qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
-//    auto js = json.object();
-//    for (auto rec : js) {
-//        qDebug()<< rec <<"\n";
-//    }
+//qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
 
     int             obj_id = 0, v_slot = -1;
     QString         obj_cr, end_type;
@@ -74,7 +70,7 @@ qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
                 obj_id = pn["hop_cross"]["id"].toInt();
                 obj_cr = QString("кр: %1 п: %2").arg(pn["hop_cross"]["name"].toString()).arg(pn["hop_port"]["num"].toInt());
                 color_cr = {conf->color_cross[pn["hop_port"]["up_status"].toInt()], conf->color_cross[pn["hop_port"]["int_c_status"].toInt()]};
-                obj_par = {pn["hop_coup"]["hop_parent_lo"].toString(), pn["hop_coup"]["hop_parent_full"].toString()};
+                obj_par = {pn["hop_cross"]["hop_parent_lo"].toString(), pn["hop_cross"]["hop_parent_full"].toString()};
             }
             if (end_type == "loopback detected") {
                 obj_id = 0;
@@ -82,7 +78,7 @@ qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
                 color_cr = {"red", "red"};
                 obj_par = {"",""};
             }
-//qDebug() <<end_type<<obj_id<<obj_cr<<color_cr;
+//qDebug() <<end_type<<obj_id<<obj_cr<<color_cr<<obj_par[1];
             pcmd = new QPushButton(QString("%1").arg(pn["count_hop"].toInt()), this);
             pcmd->setObjectName(QString("but_hop_%1").arg(pn["id"].toInt()));
             pcmd->setFocusPolicy(Qt::NoFocus);
@@ -93,7 +89,7 @@ qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
 
             pcmd = new QPushButton(obj_cr, this);
             pcmd->setObjectName(QString("but_parr_%1_%2").arg(end_type).arg(obj_id));
-            pcmd->setToolTip(QString("%1<br>%2").arg(obj_cr).arg(obj_par[1]));
+            pcmd->setToolTip(obj_par[1]);
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_parrent_size); pcmd->setMaximumSize(conf->but_parrent_size);
             pcmd->move(conf->but_parrent_H_offset[fr_pos], conf->but_V_offset * v_slot);
@@ -126,9 +122,9 @@ qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
 
 void CoupPaintExt::but_hop_clicked()
 {
-    QString p_id = static_cast<QPushButton*>(sender())->objectName().split("_")[2];
-    emit showHop(p_id.toInt());
-qDebug() << "but_hop_clicked: emit showHop" << p_id;
+    QString c_p_id = sender()->objectName().split("_")[2];
+    emit sigShowHopExt(c_p_id.toUInt());
+//qDebug() << "but_hop_clicked: emit showHop" << c_p_id;
 }
 
 void CoupPaintExt::but_parr_clicked()

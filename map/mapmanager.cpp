@@ -77,7 +77,7 @@ void MapManager::on_pb_map_refresh_clicked()
 //    ui->pb_link->setEnabled(true);
     last_coup = nullptr;
     int id = (int)Idx::label;
-    foreach(QGraphicsItem *item, scene->items()) {
+    foreach (QGraphicsItem *item, scene->items()) {
         if (item->data(id).toString() != "pix_map") {
             scene->removeItem(item);
             delete item;
@@ -198,24 +198,24 @@ void MapManager::on_pb_all_visible_clicked()
 {
 //    ui->pb_pix_hide->setChecked(false);
     ui->pb_all_visible->setEnabled(false);
-//    QList<QString> param;
-//    int conf_param = conf->Obj.indexOf("Param");
+    QStringList param;
+    int conf_param = (int)Idx::param;
     foreach (QGraphicsItem *item, scene->items()) {
         item->setSelected(false);
         item->setVisible(true);
-//        item->setData(conf->Obj.indexOf("VisMode"), 1);
-//        if (item->data(conf->Obj.indexOf("Label")).toString() == "polyline") {
-//            ObjPolyline *poly = static_cast<ObjPolyline *>(item);
-//            param = poly->data(conf_param).toString().split(",");
-//            poly->setPen(QPen(QColor(poly->data(conf->Obj.indexOf("CabColor")).toString()),
-//                              param.at(0).toInt(),
-//                              Qt::PenStyle(param.at(1).toInt()),
-//                              Qt::RoundCap,
-//                              Qt::RoundJoin
-//                              ));
-//        }
+        item->setData((int)Idx::VisMode, 1);
+        if (item->data((int)Idx::label).toString() == "polyline") {
+            ObjPolyline *poly = static_cast<ObjPolyline *>(item);
+            param = poly->data(conf_param).toString().split(",");
+            poly->setPen(QPen(QColor(poly->data((int)Idx::cabcolor).toString()),
+                              param.at(0).toInt(),
+                              Qt::PenStyle(param.at(1).toInt()),
+                              Qt::RoundCap,
+                              Qt::RoundJoin
+                              ));
+        }
     }
-    //scene->update();
+    scene->update();
 }
 
 //--------------------------------------------------------------------------
@@ -314,7 +314,7 @@ void MapManager::slotCoupMoved(QPointF to_pos)
 //    if (! queue_coup.contains(c_id))
 //        queue_coup << c_id;
     coup_upd_list.insert(c_id, {to_pos.x(), to_pos.y(), parr_id, curr_type});
-    foreach(QGraphicsItem *item, scene->items()) {
+    foreach (QGraphicsItem *item, scene->items()) {
         if (curr_type == 0) {
             if ((item->data((int)Idx::label).toString() == "locker") && (item->data((int)Idx::o_id).toInt() == parr_id)) {
                 //obj_lo *lo = static_cast<obj_lo *>(item);
@@ -369,6 +369,7 @@ void MapManager::slotLineClick(QGraphicsItem *ref_item)
 //    ui->lab_obj_name->setText("кабель: " + item->data((int)Idx::cabtype).toString() +" <"+ item->data((int)Idx::o_id).toString());
 //                          " | " + item->data(conf->Obj.indexOf("LineIdId")).toString() +
 //                          " | " + item->data(conf->Obj.indexOf("LineCNCN")).toString() + ">");
+    qDebug()<<item->data((int)Idx::lineidid)<<item->data((int)Idx::linecncn);
     ui->lab_coord->setText("  ");
 //    ui->pb_obj_hide->setEnabled(true);
     if (ui->pb_edit->isChecked()) {
@@ -421,8 +422,10 @@ void MapManager::on_pb_welding_toggled(bool checked)
         coupManager->setWindowFlags(Qt::Window);
 //        QObject::connect(coupManager, &CoupManager::sigToMapCoup, this, &MapManager::slotCoupOnCenter);
         QObject::connect(coupManager, &CoupManager::sigToMapCoup, mapView, &MapView::slotCoupOnCenter);
+        QObject::connect(userSession, &UserSession::sigShowHopData, this, &MapManager::slotShowHopData);
         QObject::connect(coupManager, &CoupManager::destroyed, this, &MapManager::welding_exit);
         coupManager->show();
+//        userSession->getShowHop(248);           //
     } else if (coupManager != nullptr) {
         coupManager->deleteLater();
         coupManager = nullptr;
@@ -434,4 +437,65 @@ void MapManager::welding_exit()
     coupManager = nullptr;
     ui->pb_welding->setChecked(false);
 }
+
+void MapManager::slotShowHopData(/*uint c_p_id, */QJsonDocument json)
+{
+//    qDebug()<<"MapManager::slotShowHop"<< c_p_id << json;
+    QVector<int> coup_id, cab_len;
+    QStringList idid, cncn;
+    QVector<QPair<QString, QString>> idid_list, cncn_list;
+    QVector<int> coup_id_list, cab_num_list, cab_len_list;
+    auto _cil = json["coup_id_list"], _cnl = json["cab_num_list"], _cll = json["cab_len_list"];
+    for (auto i = 0; !_cil[i].isUndefined() ; ++i) coup_id_list << _cil[i].toInt();
+    for (auto i = 0; !_cnl[i].isUndefined() ; ++i) cab_num_list << _cnl[i].toInt();
+    for (auto i = 0; !_cll[i].isUndefined() ; ++i) cab_len_list << _cll[i].toInt();
+    for (int idx = 0; idx < coup_id_list.size(); idx += 2) {
+        if (idx % 2 == 0) {
+            coup_id << coup_id_list[idx+1];
+            cab_len << cab_len_list[idx+1];
+        }
+        idid_list << QPair<QString, QString>(QString("%1").arg(coup_id_list[idx]), QString("%1").arg(coup_id_list[idx+1]));
+        cncn_list << QPair<QString, QString>(QString("%1").arg(cab_num_list[idx]), QString("%1").arg(cab_num_list[idx+1]));
+    }
+//qDebug()<<coup_id<<cab_len<<idid<<cncn;
+    foreach (QGraphicsItem *item, scene->items()) {
+        if (item->data((int)Idx::label).toString() == "coup") {
+            if (coup_id.contains(item->data((int)Idx::o_id).toInt()))
+                item->setData((int)Idx::VisMode, 2);
+            else
+                item->setData((int)Idx::VisMode, 0);
+        }
+        if (item->data((int)Idx::label).toString() == "polyline") {
+            idid = item->data((int)Idx::lineidid).toString().split(",");
+            cncn = item->data((int)Idx::linecncn).toString().split(",");
+            ObjPolyline *poly = static_cast<ObjPolyline *>(item);
+            bool found = false;
+            for (int idx = 0; idx < idid_list.size(); ++idx) {
+                if ((idid.at(0) == idid_list.at(idx).first && idid.at(1) == idid_list.at(idx).second && cncn.at(0) == cncn_list.at(idx).first && cncn.at(1) == cncn_list.at(idx).second) ||
+                    (idid.at(1) == idid_list.at(idx).first && idid.at(0) == idid_list.at(idx).second && cncn.at(1) == cncn_list.at(idx).first && cncn.at(0) == cncn_list.at(idx).second)
+                   ) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+                poly->setPen(QPen(QColor(conf->cab_color.value("!")),
+                                  conf->cab_width.value("!").toUInt(),
+                                  Qt::SolidLine,
+                                  Qt::RoundCap,
+                                  Qt::RoundJoin
+                                 ));
+            else
+                poly->setPen(QPen(QColor(conf->cab_color.value("0")),
+                                  conf->cab_width.value("0").toUInt(),
+                                  Qt::SolidLine,
+                                  Qt::RoundCap,
+                                  Qt::RoundJoin
+                                 ));
+        }
+    }
+    ui->pb_all_visible->setEnabled(true);
+    scene->update();
+}
+
 

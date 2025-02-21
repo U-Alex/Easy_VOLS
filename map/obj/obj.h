@@ -2,7 +2,7 @@
 #define OBJ_H
 
 enum class Idx {
-    o_id, parr_id, parr_type, o_name, label, cabtype, cabcolor, lineidid, linecncn, param
+    o_id, parr_id, parr_type, o_name, label, cabtype, cabcolor, lineidid, linecncn, param, VisMode
 };
 
 enum class ObjType {

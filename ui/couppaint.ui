@@ -21,12 +21,6 @@
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
-  <property name="frameShape">
-   <enum>QFrame::StyledPanel</enum>
-  </property>
-  <property name="frameShadow">
-   <enum>QFrame::Raised</enum>
-  </property>
   <widget class="QLabel" name="label_head">
    <property name="geometry">
     <rect>

@@ -42,7 +42,7 @@ void CoupPaint::slotCoupPaint(uint c_id, QJsonDocument json)
     for (auto i = 0; !_crp[i].isUndefined() ; ++i) {
         cross_p.insert(_crp[i][0].toInt(), {_crp[i][1].toInt(), _crp[i][2].toString()});
     }
-qDebug() << "cross_p.size()"<< cross_p.size();
+//qDebug() << "cross_p.size()"<< cross_p.size();
 
     prepareCab();
 }
@@ -72,7 +72,7 @@ void CoupPaint::prepareCab()
         v_slot[v_pos] += 2;
         v_slot[v_pos] += cab_links[idx]["cab_capa"].toInt();
     }
-qDebug() << "v_slot"<< v_slot;
+//qDebug() << "v_slot"<< v_slot;
     postCabList();
     createBut();
     createLinks();

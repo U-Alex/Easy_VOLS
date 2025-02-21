@@ -20,6 +20,7 @@ public:
     void deleteLink(uint id);
     void getDataPaint(uint id);
     void getDataPaintExt(uint id, QStringList cab_list, short fr_pos);
+    void getShowHop(uint c_p_id);
 
 signals:
     void sigAuthResult(bool);
@@ -27,6 +28,7 @@ signals:
     void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
     void sigCoupPaint(uint, QJsonDocument);
     void sigCoupPaintExt(uint, short, QJsonDocument);
+    void sigShowHopData(/*uint, */QJsonDocument);
 
 private:
     RestAccessManager *_ram;

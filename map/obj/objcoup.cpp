@@ -1,5 +1,6 @@
 #include "map/obj/objcoup.h"
 
+#include "map/obj/obj.h"
 
 ObjCoup::ObjCoup(int parr_type, QColor color) : QGraphicsObject()
 {
@@ -23,8 +24,8 @@ void ObjCoup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->setBrush(p_color);
     if (isSelected()) painter->setBrush(QColor(Qt::magenta));
-//    if (data(7) == 2) painter->setBrush(Qt::red);                                      //ObjVisMode
-//    if (data(7) == 0) painter->setBrush(Qt::gray);                                     //ObjVisMode
+    if (data((int)Idx::VisMode) == 2) painter->setBrush(Qt::red);
+    if (data((int)Idx::VisMode) == 0) painter->setBrush(Qt::gray);
 
     painter->drawEllipse(p_rect);
 }

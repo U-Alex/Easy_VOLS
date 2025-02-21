@@ -21,7 +21,7 @@ public slots:
     void slotCoupPaintExt(uint, short, QJsonDocument);
 
 signals:
-    void showHop(int p_id);
+    void sigShowHopExt(uint c_p_id);
 
 private:
     Ui::CoupPaintExt *ui;
