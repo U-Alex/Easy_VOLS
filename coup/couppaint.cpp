@@ -80,10 +80,6 @@ void CoupPaint::prepareCab()
 
 void CoupPaint::postCabList()
 {
-//    QVector<int> res_l, res_r;
-//    for (auto &rec : cab_slot_L) res_l << rec["cable_num"].toInt();
-//    for (auto &rec : cab_slot_R) res_r << rec["cable_num"].toInt();
-//    emit sigNextCoupExt(res_l, res_r);
     QStringList res_l, res_r;
     for (auto &rec : cab_slot_L) res_l << QString("%1").arg(rec["cable_num"].toInt());
     for (auto &rec : cab_slot_R) res_r << QString("%1").arg(rec["cable_num"].toInt());
@@ -156,7 +152,8 @@ void CoupPaint::createBut()
             QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
             pcmd = new QPushButton("↑↑", this);
-            pcmd->setObjectName(QString("but_c_up_%1").arg(curr_num));
+//            pcmd->setObjectName(QString("but_c_up_%1").arg(curr_num));
+            pcmd->setObjectName(QString("but_c_up_%1_%2").arg(curr_num).arg(v_pos));
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
             pcmd->move(conf->but_cab_up_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
@@ -164,7 +161,7 @@ void CoupPaint::createBut()
             QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
             pcmd = new QPushButton("↔", this);
-            pcmd->setObjectName(QString("but_c_lr_%1").arg(curr_num));
+            pcmd->setObjectName(QString("but_c_lr_%1_%2").arg(curr_num).arg(v_pos));
             pcmd->setFocusPolicy(Qt::NoFocus);
             pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
             pcmd->move(conf->but_cab_lr_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
@@ -362,8 +359,7 @@ void CoupPaint::paintEvent(QPaintEvent *event)
 void CoupPaint::but_ext_coup_clicked()
 {
     QPushButton *bext = static_cast<QPushButton*>(sender());
-    bool ok;
-    int coup_id = bext->objectName().mid(15).toUInt(&ok, 10);
+    int coup_id = bext->objectName().split("_").at(4).toInt();
     for (auto &ob : cab_links) {
         if (ob["id"].toInt() == coup_id) {
             emit sigNextCoup(coup_id, {ob["coord_x"].toInt(), ob["coord_y"].toInt()});
@@ -371,25 +367,81 @@ void CoupPaint::but_ext_coup_clicked()
         }
     }
 //qDebug() << "but_ext_coup_clicked:" << bext->objectName() << "coup_id:" << coup_id;
-//    emit nextCoup(coup_id);
 }
 
 void CoupPaint::but_cab_clicked()
 {
     QPushButton *bcab = static_cast<QPushButton*>(sender());
-qDebug() << "but_cab_clicked: " << bcab->objectName() << bcab->pos();
+//qDebug() << "but_cab_clicked: " << bcab->objectName() << bcab->pos();
+    QStringList but_name = bcab->objectName().split("_");
+    int cab_n = but_name.at(3).toInt();
+    int but_pos = but_name.at(4).toUInt();
+    auto &cab_slot_this = (but_pos) ? cab_slot_R : cab_slot_L;
+    auto &cab_slot_to = (!but_pos) ? cab_slot_R : cab_slot_L;
+    int idx = -1;
+    for (int i = 0; i < cab_slot_this.size(); ++i) {
+        if (cab_slot_this.at(i)["cable_num"].toInt() == cab_n) {
+            idx = i;
+            break;
+        }
+    }
+    if (but_name.at(2) == "up" && idx <= 0) return;
+    if (but_name.at(2) == "up" && idx > 0) {
+        cab_slot_this.swapItemsAt(idx, idx-1);
+    } else
+    if (but_name.at(2) == "lr") {
+        cab_slot_to.append(cab_slot_this.at(idx));
+        cab_slot_this.removeAt(idx);
+    } else
+        return;
 
-
-
-
+    for (QObject* pb : this->children()) {
+        if (pb->objectName().startsWith("but_") || pb->objectName().startsWith("lab_"))
+            pb->deleteLater();
+    }
+    postCabList();
+    createBut();
+    createLinks();
+    this->update();
 }
 
 void CoupPaint::but_fiber_clicked()
 {
     QPushButton *bp = static_cast<QPushButton*>(sender());
-qWarning() << "but_fiber_clicked:" << bp->objectName() << bp->pos() << bp->isChecked();
+//qDebug() << "but_fiber_clicked:" << bp->objectName() << bp->pos() << bp->isChecked();
+    QPoint b_cntr = QPoint(conf->but_fiber_size.width()/2, conf->but_fiber_size.height()/2);
+    QPoint curr_pos = bp->pos() + b_cntr;
 
-
-
-
+    if (bp->isChecked()){
+        for (QPolygon plg : links) {
+            if (plg.first() == curr_pos) {
+                links_sel << plg;
+                QPoint bp2_pos = plg.last() - b_cntr;
+                if (ports.key(bp2_pos)) this->findChild< QPushButton * >(QString("but_p_%1").arg(ports.key(bp2_pos)))->setChecked(1);
+                break;
+            }
+            if (plg.last() == curr_pos) {
+                links_sel << plg;
+                QPoint bp2_pos = plg.first() - b_cntr;
+                if (ports.key(bp2_pos)) this->findChild< QPushButton * >(QString("but_p_%1").arg(ports.key(bp2_pos)))->setChecked(1);
+                break;
+            }
+        }
+    } else {
+        for (int ind = 0; ind < links_sel.length(); ind++) {
+            if (links_sel[ind].first() == curr_pos) {
+                QPoint bp2_pos = links_sel[ind].last() - b_cntr;
+                if (ports.key(bp2_pos)) this->findChild< QPushButton * >(QString("but_p_%1").arg(ports.key(bp2_pos)))->setChecked(0);
+                links_sel.removeAt(ind);
+                break;
+            }
+            if (links_sel[ind].last() == curr_pos) {
+                QPoint bp2_pos = links_sel[ind].first() - b_cntr;
+                if (ports.key(bp2_pos)) this->findChild< QPushButton * >(QString("but_p_%1").arg(ports.key(bp2_pos)))->setChecked(0);
+                links_sel.removeAt(ind);
+                break;
+            }
+        }
+    }
+    this->update();
 }

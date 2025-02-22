@@ -1,9 +1,12 @@
 [General]
 
 background_image="images/map1.png"
-
+#coup_stamp_image="images/stamp.png"
+rest_url="http://192.168.1.11:8002"
 
 [map]
+
+image_allocation_limit=2048
 
 color_coup="main_company=palegreen◀▶second_company=khaki◀▶РТК=lightblue"
 

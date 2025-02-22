@@ -99,7 +99,7 @@ void CoupPaintExt::slotCoupPaintExt(uint c_id, short _fr_pos, QJsonDocument json
             if (color_cr[0] != "None") {
                 lbl_cr = new QLabel("", this);
                 lbl_cr->setObjectName(QString("lab_cr1_%1").arg(obj_id));
-                //lbl_cr->setToolTip("тип внешней связи");
+                lbl_cr->setToolTip("тип внешней связи");
                 lbl_cr->setFixedSize(conf->lab_color_cr_size);
                 lbl_cr->setAlignment(Qt::AlignHCenter);
                 lbl_cr->setStyleSheet(QString("background-color: %1").arg(color_cr[0]));
@@ -109,7 +109,7 @@ void CoupPaintExt::slotCoupPaintExt(uint c_id, short _fr_pos, QJsonDocument json
             if (end_type == "cross" && color_cr[1] != "None") {
                 lbl_cr = new QLabel("", this);
                 lbl_cr->setObjectName(QString("lab_cr2_%1").arg(obj_id));
-                lbl_cr->setToolTip("тип внутренней связи\n в конце цепочки");
+                lbl_cr->setToolTip("тип внутренней связи\nв конце цепочки");
                 lbl_cr->setFixedSize(conf->lab_color_cr_size);
                 lbl_cr->setAlignment(Qt::AlignHCenter);
                 lbl_cr->setStyleSheet(QString("background-color: %1").arg(color_cr[1]));

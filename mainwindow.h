@@ -8,9 +8,7 @@
 #include "map/mapmanager.h"
 #include "b_logic/usersession.h"
 
-//QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
-//QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -20,20 +18,17 @@ public:
     ~MainWindow();
 
 public slots:
-    void slotAuthResult(bool);
-
-private slots:
-    void on_but_login_clicked();
-
-    void on_but_logout_clicked();
+    void slotAuthResult(bool, QString);
 
 private:
     Ui::MainWindow *ui;
-
     Config         *conf = nullptr;
     MapManager     *mapManager = nullptr;
     UserSession    *userSession = nullptr;
 
+private slots:
+    void on_but_login_clicked();
+    void on_but_logout_clicked();
 };
 
 #endif // MAINWINDOW_H

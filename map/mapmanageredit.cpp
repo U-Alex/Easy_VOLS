@@ -35,21 +35,23 @@ MapManagerEdit::~MapManagerEdit()
     delete ui;
 }
 
-
-
 void MapManagerEdit::on_pb_lab_apply_clicked()
 {
 
+
+
+
+
+
+
 }
-
-
 
 void MapManagerEdit::cableClick(ObjPolyline *item)
 {
     if (line != item) {
         line = item;
         ui->pb_line_apply->blockSignals(true);
-        QList<QString> param = line->data((int)Idx::param).toString().split(",");
+        QStringList param = line->data((int)Idx::param).toString().split(",");
         ui->comboBox_line_type->setCurrentIndex(param.at(1).toInt() - 1);
         ui->spinBox_line_size->setValue(param.at(0).toInt());
         ui->spinBox_line_z_index->setValue(int(item->zValue()));

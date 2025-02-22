@@ -1,11 +1,8 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-//#include <QtGui>
 #include <QWheelEvent>
 #include <QGraphicsView>
-
-//QT_FORWARD_DECLARE_CLASS(QSlider)
 
 namespace Ui { class MapView; }
 
@@ -31,7 +28,7 @@ private slots:
     void on_pb_antialiasing_toggled(bool checked);
     void on_pb_select_mode_toggled(bool checked);
     void on_pb_print_clicked();
-
+    void on_pb_map_export_clicked();
 };
 
 #endif // MAPVIEW_H

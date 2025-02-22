@@ -41,13 +41,15 @@ private:
 
     QStringList      cab_L, cab_R;
 
-
 private slots:
-    void on_pb_L_toggled(bool checked);
-    void on_pb_R_toggled(bool checked);
+    void on_pb_L_toggled(bool);
+    void on_pb_R_toggled(bool);
     void fr_P_repaint(short);
 
+    void on_spinBox_w_line_valueChanged(int);
     void on_pb_update_clicked();
+    void on_pb_export_clicked();
+    void on_pb_print_clicked();
 };
 
 #endif // COUPMANAGER_H

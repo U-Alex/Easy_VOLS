@@ -7,11 +7,12 @@
 //#include <thread>           //
 //    std::this_thread::sleep_for(std::chrono::seconds(2));
 
-UserSession::UserSession(QObject *parent) :
-    QObject(parent)
+UserSession::UserSession(Config *ref_conf, QObject *parent) :
+    QObject(parent),
+    conf(ref_conf)
 {
     _ram = new RestAccessManager(this);
-    _ram->setUrl(QUrl("http://192.168.1.11:8002"));
+    _ram->setUrl(QUrl(conf->rest_url));
 }
 
 UserSession::~UserSession()
@@ -25,16 +26,19 @@ void UserSession::auth(QString login, QString pass)
         if (success) {
             QJsonParseError err;
             auto json = QJsonDocument::fromJson(reply->readAll(), &err);
-//        qDebug() << "json token:" << json["token"].toString();
+//        qDebug() << "json token:" << json;
             auto token = json["token"].toString("");
             if (!err.error && !token.isEmpty()) {
                 _ram->setAuthorizationToken(token.toUtf8());
-                emit sigAuthResult(true);
+                user->u_id = json["user"][0].toInt();
+                user->name = QString("%1 %2").arg(json["user"][1].toString()).arg(json["user"][2].toString());
+                user->email = json["user"][3].toString();
+                emit sigAuthResult(true, user->name);
                 return;
 //            else emit(error...);
             }
         }
-        emit sigAuthResult(false);
+        emit sigAuthResult(false, "");
     };
     QString api{"/api/vols/api-token-auth/"};
     QVariantMap param{};
@@ -80,7 +84,7 @@ void UserSession::getData(ObjType objType, uint id)
 
 void UserSession::setData(ObjType objType, QMap<int, QList<QVariant>> data)
 {
-    qDebug() << "setData:" << (int)objType << data;
+//    qDebug() << "setData:" << (int)objType << data;
     RestAccessManager::ResponseCallback callback = [/*this*/]
             (QNetworkReply* reply, bool success) {
         if (success) {

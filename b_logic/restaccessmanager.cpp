@@ -1,6 +1,6 @@
 #include "restaccessmanager.h"
 
-#include <QJsonArray>//
+//#include <QJsonArray>//
 using namespace Qt::StringLiterals;
 static constexpr auto contentTypeJson = "application/json"_L1;
 static const auto authorizationToken = "TOKEN"_ba;

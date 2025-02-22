@@ -1,8 +1,6 @@
 #include "mapmanager.h"
 #include "ui_mapmanager.h"
 
-//#include <QPropertyAnimation>
-//#include <QParallelAnimationGroup>
 #include <QImageReader>
 
 #include "map/obj/objlocker.h"
@@ -14,9 +12,7 @@ MapManager::MapManager(Config *ref_conf, UserSession *us, QWidget *parent) :
     userSession(us)
 {
     ui->setupUi(this);
-
     ui->map_scrollArea->setVisible(false);
-//    ui->map_frame_L->setVisible(false);
 
     scene = new MapScene(this);
     QObject::connect(scene, &MapScene::sigBlankClick, this, &MapManager::slotBlankClick);
@@ -36,16 +32,6 @@ MapManager::MapManager(Config *ref_conf, UserSession *us, QWidget *parent) :
 //    ui->map_frame_temp->deleteLater();                   //
     ui->map_Layout->addWidget(mapView, 0, 1);
 
-//    QImageReader::setAllocationLimit(2048);
-//    QPixmap image(conf->map_f_name);
-//    map_size = image.size();
-//    pix_map = scene->addPixmap(image);
-//    pix_map ->setData((int)Idx::label, "pix_map");
-
-    mapView->centerOn(QPointF(9000, 15378));        //
-//    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
-    showAllObj();
-        ui->pb_welding->click();            //
 }
 
 MapManager::~MapManager()
@@ -58,6 +44,24 @@ MapManager::~MapManager()
     objFab->deleteLater();
     scene->deleteLater();
     delete ui;
+}
+
+void MapManager::start()
+{
+    ui->frame_com->setEnabled(true);
+    ui->map_frame_L->setEnabled(true);
+    showAllObj();
+
+    QImageReader::setAllocationLimit(conf->image_allocation_limit);
+    QPixmap image(conf->map_f_name);
+    map_size = image.size();
+    pix_map = scene->addPixmap(image);
+    pix_map->setData((int)Idx::label, "pix_map");
+
+    mapView->centerOn(QPointF(9000, 15378));        //
+//    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
+//    showAllObj()
+//        ui->pb_welding->click();            //
 }
 
 void MapManager::showAllObj()
@@ -119,7 +123,6 @@ void MapManager::on_pb_edit_toggled(bool checked)
         fr_edit = new MapManagerEdit(this);
 //        connect(scene, &MapScene::sigBlankClick, fr_edit, &MapManagerEdit::slot_blank);
 //        connect(scene, &MapScene::sigLabelClick, fr_edit, &MapManagerEdit::slot_label);
-//        QObject::connect(this, &MapManager::cableClick, fr_edit, &MapManagerEdit::slotCable);
         ui->map_Layout_R->addWidget(fr_edit);
     }
 }
@@ -246,18 +249,9 @@ void MapManager::slotPwcontClick(QGraphicsItem *ref_item)
                 dest_pos = last_pw_cont_pos;
                 return;
             }
-//            else {
-//                int c_id = last_pw_cont->data((int)Idx::o_id).toInt();
-//                if (! queue_pw_cont.contains(c_id)) {           //
-//                    queue_pw_cont << c_id;
-//                }
-//                if (! pwcont_upd_list.contains(c_id)) {qDebug() << "pwcont_upd_list"<< c_id;
-//                    QList<QVariant> u_list{dest_pos};
-                pwcont_upd_list.insert(last_pw_cont->data((int)Idx::o_id).toInt(), {dest_pos.x(), dest_pos.y()});
-//                }
-                last_pw_cont_pos = dest_pos;
-                if (! ui->pb_apply->isEnabled()) ui->pb_apply->setEnabled(true);
-//            }
+            pwcont_upd_list.insert(last_pw_cont->data((int)Idx::o_id).toInt(), {dest_pos.x(), dest_pos.y()});
+            last_pw_cont_pos = dest_pos;
+            if (! ui->pb_apply->isEnabled()) ui->pb_apply->setEnabled(true);
         }
     }
 }
@@ -363,17 +357,15 @@ void MapManager::slotLockerClick(QGraphicsItem *ref_item)
 void MapManager::slotLineClick(QGraphicsItem *ref_item)
 {
     ObjPolyline *item = static_cast<ObjPolyline *>(ref_item);
-    ui->lab_obj_name->setText(QString("кабель: %1 <%2>")
-                              .arg(item->data((int)Idx::cabtype).toString())
-                              .arg(item->data((int)Idx::o_id).toString()));
+    ui->lab_obj_name->setText(QString("кабель: %1")
+                              .arg(item->data((int)Idx::cabtype).toString()));
+                              /*.arg(item->data((int)Idx::o_id).toString()));*/
 //    ui->lab_obj_name->setText("кабель: " + item->data((int)Idx::cabtype).toString() +" <"+ item->data((int)Idx::o_id).toString());
 //                          " | " + item->data(conf->Obj.indexOf("LineIdId")).toString() +
 //                          " | " + item->data(conf->Obj.indexOf("LineCNCN")).toString() + ">");
-    qDebug()<<item->data((int)Idx::lineidid)<<item->data((int)Idx::linecncn);
+//    qDebug()<<item->data((int)Idx::lineidid)<<item->data((int)Idx::linecncn);
     ui->lab_coord->setText("  ");
-//    ui->pb_obj_hide->setEnabled(true);
     if (ui->pb_edit->isChecked()) {
-//        emit cableClick(item);
         fr_edit->cableClick(item);
         int l_id = item->data((int)Idx::o_id).toInt();
         if (! line_upd_id.contains(l_id))
@@ -420,12 +412,10 @@ void MapManager::on_pb_welding_toggled(bool checked)
         if (coupManager == nullptr) coupManager = new CoupManager(conf, userSession, this);
         coupManager->setAttribute(Qt::WA_DeleteOnClose, 1);
         coupManager->setWindowFlags(Qt::Window);
-//        QObject::connect(coupManager, &CoupManager::sigToMapCoup, this, &MapManager::slotCoupOnCenter);
         QObject::connect(coupManager, &CoupManager::sigToMapCoup, mapView, &MapView::slotCoupOnCenter);
         QObject::connect(userSession, &UserSession::sigShowHopData, this, &MapManager::slotShowHopData);
         QObject::connect(coupManager, &CoupManager::destroyed, this, &MapManager::welding_exit);
         coupManager->show();
-//        userSession->getShowHop(248);           //
     } else if (coupManager != nullptr) {
         coupManager->deleteLater();
         coupManager = nullptr;
@@ -446,9 +436,9 @@ void MapManager::slotShowHopData(/*uint c_p_id, */QJsonDocument json)
     QVector<QPair<QString, QString>> idid_list, cncn_list;
     QVector<int> coup_id_list, cab_num_list, cab_len_list;
     auto _cil = json["coup_id_list"], _cnl = json["cab_num_list"], _cll = json["cab_len_list"];
-    for (auto i = 0; !_cil[i].isUndefined() ; ++i) coup_id_list << _cil[i].toInt();
-    for (auto i = 0; !_cnl[i].isUndefined() ; ++i) cab_num_list << _cnl[i].toInt();
-    for (auto i = 0; !_cll[i].isUndefined() ; ++i) cab_len_list << _cll[i].toInt();
+    for (auto i = 0; !_cil[i].isUndefined(); ++i) coup_id_list << _cil[i].toInt();
+    for (auto i = 0; !_cnl[i].isUndefined(); ++i) cab_num_list << _cnl[i].toInt();
+    for (auto i = 0; !_cll[i].isUndefined(); ++i) cab_len_list << _cll[i].toInt();
     for (int idx = 0; idx < coup_id_list.size(); idx += 2) {
         if (idx % 2 == 0) {
             coup_id << coup_id_list[idx+1];
@@ -497,5 +487,4 @@ void MapManager::slotShowHopData(/*uint c_p_id, */QJsonDocument json)
     ui->pb_all_visible->setEnabled(true);
     scene->update();
 }
-
 

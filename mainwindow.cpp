@@ -2,14 +2,14 @@
 #include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     conf = new Config();
-    userSession = new UserSession(this);
+    userSession = new UserSession(conf, this);
     QObject::connect(userSession, &UserSession::sigAuthResult, this, &MainWindow::slotAuthResult);
     ui->but_logout->hide();
 //    slotAuthResult(true);   //
@@ -22,7 +22,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::slotAuthResult(bool ok)
+void MainWindow::slotAuthResult(bool ok, QString username)
 {
 //    qDebug() << "authResult" << ok;
     if (ok) {
@@ -30,13 +30,14 @@ void MainWindow::slotAuthResult(bool ok)
         ui->lineEdit_login->hide();
         ui->lineEdit_password->hide();
         ui->but_logout->setVisible(true);
-        ui->label_user->setText("TODO user");
+        ui->label_user->setText(username);
         if (mapManager == nullptr) {
             mapManager = new MapManager(conf, userSession, this);
-            mapManager->setAttribute(Qt::WA_DeleteOnClose, 1);
+            mapManager->setAttribute(Qt::WA_DeleteOnClose, true);
             mapManager->setWindowFlags(Qt::Window);
-            connect(mapManager, &MapManager::destroyed, this, &MainWindow::on_but_logout_clicked);
+            QObject::connect(mapManager, &MapManager::destroyed, this, &MainWindow::on_but_logout_clicked);
             mapManager->show();
+            mapManager->start();
         }
     }
     else {

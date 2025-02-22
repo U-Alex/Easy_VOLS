@@ -2,13 +2,12 @@
 #include "ui_mapview.h"
 
 #include <QScrollBar>
-//#include <QSlider>
-//#include <QMatrix>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
 #include <QGraphicsItem>
+#include <QDateTime>
 
 MapView::MapView(QWidget *parent) :
     QGraphicsView(parent),
@@ -54,34 +53,6 @@ void MapView::setupMatrix()
     this->setTransform(matrix);
 }
 
-void MapView::on_pb_antialiasing_toggled(bool checked)
-{
-    this->setRenderHint(QPainter::Antialiasing, checked);
-}
-
-void MapView::on_pb_select_mode_toggled(bool checked)
-{
-    this->setDragMode(!checked
-                        ? QGraphicsView::RubberBandDrag
-                        : QGraphicsView::ScrollHandDrag);
-    this->setTransformationAnchor(!checked
-                        ? QGraphicsView::AnchorUnderMouse
-                        : QGraphicsView::AnchorViewCenter);
-    this->setInteractive(!checked);
-}
-
-void MapView::on_pb_print_clicked()
-{
-#ifndef QT_NO_PRINTER
-    QPrinter printer;
-    QPrintDialog dialog(&printer, this);
-    if (dialog.exec() == QDialog::Accepted) {
-        QPainter painter(&printer);
-        this->render(&painter);
-    }
-#endif
-}
-
 void MapView::slotCoupOnCenter(/*uint c_id, */QPoint pos)
 {
     ui->zoomSlider->setValue(250);
@@ -101,5 +72,43 @@ void MapView::slotCoupOnCenter(/*uint c_id, */QPoint pos)
     group->addAnimation(anim_v);
     group->addAnimation(anim_h);
     group->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void MapView::on_pb_antialiasing_toggled(bool checked)
+{
+    this->setRenderHint(QPainter::Antialiasing, checked);
+}
+
+void MapView::on_pb_select_mode_toggled(bool checked)
+{
+    this->setDragMode(!checked
+                        ? QGraphicsView::RubberBandDrag
+                        : QGraphicsView::ScrollHandDrag);
+    this->setTransformationAnchor(!checked
+                        ? QGraphicsView::AnchorUnderMouse
+                        : QGraphicsView::AnchorViewCenter);
+    this->setInteractive(!checked);
+}
+
+void MapView::on_pb_print_clicked()
+{
+    QPrinter printer;
+    QPrintDialog dialog(&printer, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        QPainter painter(&printer);
+        this->render(&painter);
+    }
+}
+
+void MapView::on_pb_map_export_clicked()
+{
+    QImage image(this->scene()->sceneRect().size().toSize(), QImage::Format_ARGB6666_Premultiplied);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    if (ui->pb_antialiasing->isChecked())
+        painter.setRenderHint(QPainter::Antialiasing);
+    this->scene()->render(&painter);
+    QString f_name = QString("export/map_%1.png").arg(QDateTime::currentDateTime().toString());
+    image.save(f_name);
 }
 

@@ -1,6 +1,10 @@
 #include "coupmanager.h"
 #include "ui_coupmanager.h"
 
+#include <QPainter>
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
+
 CoupManager::CoupManager(Config *ref_conf, UserSession *us, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CoupManager),
@@ -8,7 +12,7 @@ CoupManager::CoupManager(Config *ref_conf, UserSession *us, QWidget *parent) :
     userSession(us)
 {
     ui->setupUi(this);
-//    nextCoup(1);   //
+    ui->spinBox_w_line->setValue(conf->link_v_slot_step);
 }
 
 CoupManager::~CoupManager()
@@ -37,10 +41,8 @@ void CoupManager::nextCoup(uint c_id)
     QObject::connect(coupPaint, &CoupPaint::sigNextCoup, this, &CoupManager::slotNextCoup);
     QObject::connect(coupPaint, &CoupPaint::sigNextCoupExt, this, &CoupManager::slotNextCoupExt);
     QObject::connect(userSession, &UserSession::sigCoupPaint, coupPaint, &CoupPaint::slotCoupPaint);
-//    userSession->getDataPaint(1);//
+
     userSession->getDataPaint(c_id);
-//    userSession->getDataPaint(1);//
-//    userSession->getDataPaint(c_id);//
 //    fr_P_repaint(2);
 }
 
@@ -48,7 +50,6 @@ void CoupManager::fr_P_repaint(short fr_pos)
 {
     if ((fr_pos == 0 || fr_pos == 2) && ui->pb_L->isChecked()) {
         if (coupPaintExtL != nullptr) coupPaintExtL->deleteLater();
-//        coupPaintExtL = new CoupPaintExtL(conf, orm, coup_id, c_paint->cab_n_L, 0, ui->frame_L);
         coupPaintExtL = new CoupPaintExt(conf, coup_id, 0, this);
         ui->gridLayout->addWidget(coupPaintExtL, 0, 0);
 //        QVector<int> cab_list = coupPaint->getCabList(0);
@@ -59,7 +60,6 @@ void CoupManager::fr_P_repaint(short fr_pos)
     }
     if ((fr_pos == 1 || fr_pos == 2) && ui->pb_R->isChecked()) {
         if (coupPaintExtR != nullptr) coupPaintExtR->deleteLater();
-//        coupPaintExtR = new CoupPaintExtR(conf, orm, coup_id, c_paint->cab_n_R, 1, ui->frame_R);
         coupPaintExtR = new CoupPaintExt(conf, coup_id, 1, this);
         ui->gridLayout->addWidget(coupPaintExtR, 0, 2);
 //        QVector<int> cab_list = coupPaint->getCabList(1);
@@ -100,7 +100,6 @@ void CoupManager::on_pb_L_toggled(bool checked)
     }
 }
 
-
 void CoupManager::on_pb_R_toggled(bool checked)
 {
     QPushButton *bp = static_cast<QPushButton*>(sender());
@@ -125,18 +124,65 @@ void CoupManager::on_pb_R_toggled(bool checked)
     }
 }
 
-void CoupManager::on_pb_update_clicked()
-{
-    if (coup_id) nextCoup(coup_id);
-}
-
 void CoupManager::slotShowHopExt(uint c_p_id)
 {
     qDebug()<<"CoupManager::slotShowHopExt"<< c_p_id;
     userSession->getShowHop(c_p_id);
 }
 
-//void CoupManager::slotShowHop(uint c_p_id, QJsonDocument json)
-//{
-//    qDebug()<<"CoupManager::slotShowHop"<< c_p_id << json;
-//}
+void CoupManager::on_spinBox_w_line_valueChanged(int arg1)
+{
+    conf->link_v_slot_step = arg1;
+}
+
+void CoupManager::on_pb_update_clicked()
+{
+    if (coup_id) nextCoup(coup_id);
+}
+
+void CoupManager::on_pb_export_clicked()
+{
+    if (coupPaint == nullptr) return;
+    QPalette palette1, palette2 = this->palette();
+    palette1.setColor(QPalette::Window, Qt::white);
+    palette1.setColor(QPalette::Button, Qt::white);
+    coupPaint->setPalette(palette1);
+
+    QImage image(QSize(ui->scrollAreaWidgetContents->width(), ui->scrollAreaWidgetContents->height()), QImage::Format_ARGB6666_Premultiplied);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    ui->scrollAreaWidgetContents->render(&painter);
+    QString f_name = QString("export/coup_%1").arg(coup_id);
+    image.save(f_name + ".png");
+
+    coupPaint->setPalette(palette2);
+}
+
+void CoupManager::on_pb_print_clicked()
+{
+    if (coupPaint == nullptr) return;
+    QPalette palette1, palette2 = this->palette();
+    palette1.setColor(QPalette::Window, Qt::white);
+    palette1.setColor(QPalette::Button, Qt::white);
+    coupPaint->setPalette(palette1);
+
+    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    printer->setPageSize (QPageSize::A4);
+    printer->setOutputFormat(QPrinter::PdfFormat);
+    printer->setResolution(1200);
+
+    QPrintDialog printdialog(printer, this);
+    if (printdialog.exec() == QDialog::Accepted) {
+        QPainter painter;
+        painter.begin(printer);
+        auto xscale = printer->pageRect(QPrinter::Point).width() / double(ui->scrollAreaWidgetContents->width()) * 16.3;
+        auto yscale = printer->pageRect(QPrinter::Point).height() / double(ui->scrollAreaWidgetContents->height()) * 16.3;
+        double scale = qMin(xscale, yscale);
+        painter.scale(scale, scale);
+        ui->scrollAreaWidgetContents->render(&painter);
+    }
+    coupPaint->setPalette(palette2);
+    delete printer;
+}
+

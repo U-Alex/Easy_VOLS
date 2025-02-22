@@ -67,26 +67,30 @@ void MapManagerLink::slotCoupLinks(/*uint c_id, */QJsonDocument json/*, bool one
         coup_links.append(rec);
         rec.clear();
     }
-    qDebug() << "current_links"<< current_links.count() << "coup_links" << coup_links.count();
+//    qDebug() << "current_links"<< current_links.count() << "coup_links" << coup_links.count();
     createButCabList();
 }
 
 void MapManagerLink::createButCabList()
 {
-    QLabel *lbl;
+    QLabel *lbl, *lbl2;
     QPushButton *pcmd1, *pcmd2;
     QGridLayout *grid_Layout;
-    foreach (auto row, coup_links) {
-        lbl = new QLabel(row["cable_num"].toString() + "  " + row["ext_coup_name"].toString());
+    foreach (auto &row, coup_links) {
+        lbl = new QLabel(row["cable_num"].toString() + ":  " + row["ext_coup_name"].toString());
+        lbl2 = new QLabel(row["cable_name"].toString());
+        lbl2->setStyleSheet("font-size: 10px;");
         lbl->setObjectName("d_lbl_");
-        pcmd1 = new QPushButton("◀---  ▲  ---▶");
+        lbl2->setObjectName("d_lbl_");
+//        pcmd1 = new QPushButton("◀---  ▲  ---▶");
+        pcmd1 = new QPushButton(QString("◀----  %1  ----▶").arg(row["cable_capa"].toString()));
         pcmd1->setObjectName("d_");
         pcmd1->setFocusPolicy(Qt::NoFocus);
-        pcmd1->setMinimumSize(120,26); pcmd1->setMaximumSize(120,26);
+        pcmd1->setMinimumSize(120,24); pcmd1->setMaximumSize(120,24);
         pcmd2 = new QPushButton(" X ");
         pcmd2->setObjectName("d_");
         pcmd2->setFocusPolicy(Qt::NoFocus);
-        pcmd2->setMinimumSize(40,26); pcmd2->setMaximumSize(40,26);
+        pcmd2->setMinimumSize(40,24); pcmd2->setMaximumSize(40,24);
         uint exists = linkExists(coup_id,
                                  row["ext_coup_id"].toUInt(),
                                  {row["cable_num"].toUInt(), row["ext_cable_num"].toUInt()});
@@ -101,8 +105,9 @@ void MapManagerLink::createButCabList()
         }
         grid_Layout = new QGridLayout;
         grid_Layout->addWidget(lbl, 0, 0, 1, 2);
-        grid_Layout->addWidget(pcmd1, 1, 0);
-        grid_Layout->addWidget(pcmd2, 1, 1);
+        grid_Layout->addWidget(lbl2, 1, 0, 1, 2);
+        grid_Layout->addWidget(pcmd1, 2, 0);
+        grid_Layout->addWidget(pcmd2, 2, 1);
         ui->verticalLayout_2->addLayout(grid_Layout);
     }
 }

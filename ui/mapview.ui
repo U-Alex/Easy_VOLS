@@ -39,9 +39,6 @@
        <property name="singleStep">
         <number>10</number>
        </property>
-       <property name="value">
-        <number>250</number>
-       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -130,6 +127,25 @@
        </property>
        <property name="text">
         <string>⎙</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pb_map_export">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>E</string>
        </property>
       </widget>
      </item>

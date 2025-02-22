@@ -26,13 +26,8 @@ public:
     ~MapManager();
 
 public slots:
-//    void start();
-//    void toCoupOnCenter(int coup_id);
+    void start();
     void slotShowHopData(/*uint, */QJsonDocument);
-
-signals:
-//    void cableClick(ObjPolyline *);
-//    void showWelding(uint coup_id);
 
 private:
     Ui::MapManager      *ui;

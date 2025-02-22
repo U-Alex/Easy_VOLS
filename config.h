@@ -9,19 +9,17 @@ class Config
 public:
     explicit Config();
 
+    QString                 rest_url;
     QString                 map_f_name;
+    int                     image_allocation_limit;
+
     QMap<QString,QString>   color_coup, color_lo_co;
     QStringList             lo_status_color, lo_status_list;
     QMap<QString,QString>   cab_color, cab_width;
 
-
-
-
-
-
 //coupManager
     int frame_LR_width =    300;
-
+//    QString                 coup_stamp_name;
 
 //coupPaint
     QMap<QString,QString>    ru_color_list;
@@ -55,7 +53,7 @@ public:
     int link_v_slot_step =                 6;
 
     QList<int> link_0_offset =            {210,-210};
-    QList<int> link_1_offset =            {260,-260};
+    QList<int> link_1_offset =            {210,-210};
     QList<int> link_2_offset =            {230,-230};
     QList<int> link_3_offset =            {50,-50};
 
@@ -78,13 +76,11 @@ public:
     QSize lab_up_info_size =               {200,18};
     QSize lab_color_cr_size =              {14,18};
 
-
 private:
     QSettings *setting;
 
 private slots:
     void str_to_map(QStringList, QMap<QString,QString> *);
-
 
 };
 

@@ -1,6 +1,7 @@
 #ifndef USERSESSION_H
 #define USERSESSION_H
 
+#include "config.h"
 #include "b_logic/restaccessmanager.h"
 #include "map/obj/obj.h"
 //#include "map/obj/objfab.h"
@@ -9,7 +10,7 @@ class UserSession : public QObject
 {
     Q_OBJECT
 public:
-    explicit UserSession(QObject *parent = nullptr);
+    explicit UserSession(Config *ref_conf, QObject *parent = nullptr);
     ~UserSession();
 
     void auth(QString login, QString pass);
@@ -23,7 +24,7 @@ public:
     void getShowHop(uint c_p_id);
 
 signals:
-    void sigAuthResult(bool);
+    void sigAuthResult(bool, QString);
     void sigDataToObj(ObjType, uint, QJsonDocument);
     void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
     void sigCoupPaint(uint, QJsonDocument);
@@ -31,12 +32,13 @@ signals:
     void sigShowHopData(/*uint, */QJsonDocument);
 
 private:
+    Config            *conf = nullptr;
     RestAccessManager *_ram;
+
     struct User {
         int     u_id;
         QString name;
         QString email;
-//        QByteArray token;
     };
     std::optional<User> user;
 
