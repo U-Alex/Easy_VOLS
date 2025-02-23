@@ -108,7 +108,7 @@ void MapView::on_pb_map_export_clicked()
     if (ui->pb_antialiasing->isChecked())
         painter.setRenderHint(QPainter::Antialiasing);
     this->scene()->render(&painter);
-    QString f_name = QString("export/map_%1.png").arg(QDateTime::currentDateTime().toString());
+    QString f_name = QString("export/exported_map_%1.png").arg(QDateTime::currentDateTime().toString("yyyy_dd_MM"));
     image.save(f_name);
 }
 

@@ -143,10 +143,10 @@ void CoupManager::on_pb_update_clicked()
 void CoupManager::on_pb_export_clicked()
 {
     if (coupPaint == nullptr) return;
-    QPalette palette1, palette2 = this->palette();
-    palette1.setColor(QPalette::Window, Qt::white);
-    palette1.setColor(QPalette::Button, Qt::white);
-    coupPaint->setPalette(palette1);
+//    QPalette palette1, palette2 = this->palette();
+//    palette1.setColor(QPalette::Window, Qt::white);
+//    palette1.setColor(QPalette::Button, Qt::white);
+//    this->setPalette(palette1);
 
     QImage image(QSize(ui->scrollAreaWidgetContents->width(), ui->scrollAreaWidgetContents->height()), QImage::Format_ARGB6666_Premultiplied);
     image.fill(Qt::transparent);
@@ -156,7 +156,7 @@ void CoupManager::on_pb_export_clicked()
     QString f_name = QString("export/coup_%1").arg(coup_id);
     image.save(f_name + ".png");
 
-    coupPaint->setPalette(palette2);
+//    this->setPalette(palette2);
 }
 
 void CoupManager::on_pb_print_clicked()
@@ -165,7 +165,8 @@ void CoupManager::on_pb_print_clicked()
     QPalette palette1, palette2 = this->palette();
     palette1.setColor(QPalette::Window, Qt::white);
     palette1.setColor(QPalette::Button, Qt::white);
-    coupPaint->setPalette(palette1);
+//    coupPaint->setPalette(palette1);
+    this->setPalette(palette1);
 
     QPrinter *printer = new QPrinter(QPrinter::HighResolution);
     printer->setPageSize (QPageSize::A4);
@@ -182,7 +183,8 @@ void CoupManager::on_pb_print_clicked()
         painter.scale(scale, scale);
         ui->scrollAreaWidgetContents->render(&painter);
     }
-    coupPaint->setPalette(palette2);
+//    coupPaint->setPalette(palette2);
+    this->setPalette(palette2);
     delete printer;
 }
 
