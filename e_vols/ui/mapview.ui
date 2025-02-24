@@ -77,7 +77,11 @@
         </font>
        </property>
        <property name="text">
-        <string>↔↕</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/resources/icons/mvr_2.png</normaloff>:/icons/resources/icons/mvr_2.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -145,7 +149,17 @@
         </size>
        </property>
        <property name="text">
-        <string>E</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/resources/icons/input_card1.png</normaloff>:/icons/resources/icons/input_card1.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -198,6 +212,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

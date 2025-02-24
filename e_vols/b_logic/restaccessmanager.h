@@ -27,7 +27,6 @@ public:
 private:
     QUrl m_url;
     QByteArray m_authorizationToken;
-
 };
 
 #endif // RESTACCESSMANAGER_H

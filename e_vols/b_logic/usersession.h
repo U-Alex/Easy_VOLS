@@ -4,7 +4,6 @@
 #include "config.h"
 #include "b_logic/restaccessmanager.h"
 #include "map/obj/obj.h"
-//#include "map/obj/objfab.h"
 
 class UserSession : public QObject
 {
@@ -17,7 +16,7 @@ public:
     void getData(ObjType, uint id = 0);
     void setData(ObjType, QMap<int, QList<QVariant>>);
     void getCoupLinks(uint id);
-    void createLink(/*uint id, */QMap<QString, QVariant>);
+    void createLink(QMap<QString, QVariant>);
     void deleteLink(uint id);
     void getDataPaint(uint id);
     void getDataPaintExt(uint id, QStringList cab_list, short fr_pos);
@@ -26,10 +25,10 @@ public:
 signals:
     void sigAuthResult(bool, QString);
     void sigDataToObj(ObjType, uint, QJsonDocument);
-    void sigCoupLinks(/*uint, */QJsonDocument/*, bool*/);
+    void sigCoupLinks(QJsonDocument);
     void sigCoupPaint(uint, QJsonDocument);
     void sigCoupPaintExt(uint, short, QJsonDocument);
-    void sigShowHopData(/*uint, */QJsonDocument);
+    void sigShowHopData(QJsonDocument);
 
 private:
     Config            *conf = nullptr;

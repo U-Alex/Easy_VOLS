@@ -126,7 +126,7 @@ void CoupManager::on_pb_R_toggled(bool checked)
 
 void CoupManager::slotShowHopExt(uint c_p_id)
 {
-    qDebug()<<"CoupManager::slotShowHopExt"<< c_p_id;
+//    qDebug()<<"CoupManager::slotShowHopExt"<< c_p_id;
     userSession->getShowHop(c_p_id);
 }
 

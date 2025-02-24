@@ -95,7 +95,7 @@ void CoupPaint::createBut()
     QList<int>      v_slot = {-1,-1};
     QPushButton    *pcmd;
     QList<QString>  foll = {"<<<",">>>"};
-    QLabel         *lbl_ext, *lbl_f, *lbl_cr, *lbl_m;
+    QLabel         *lbl_ext, *lbl_f, *lbl_cr, *lbl_m = nullptr;
     QPoint          but_xy, lab_xy, cross_xy;
 
     for (short v_pos = 0; v_pos < 2; ++v_pos) {
@@ -149,7 +149,7 @@ void CoupPaint::createBut()
             pcmd->setMinimumSize(conf->but_cab_type_size); pcmd->setMaximumSize(conf->but_cab_type_size);
             pcmd->move(conf->but_cab_type_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
             pcmd->setVisible(true);
-            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
+//            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
 
             pcmd = new QPushButton("↑↑", this);
 //            pcmd->setObjectName(QString("but_c_up_%1").arg(curr_num));
@@ -158,7 +158,7 @@ void CoupPaint::createBut()
             pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
             pcmd->move(conf->but_cab_up_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
             pcmd->setVisible(true);
-            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
+            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_move_clicked()));
 
             pcmd = new QPushButton("↔", this);
             pcmd->setObjectName(QString("but_c_lr_%1_%2").arg(curr_num).arg(v_pos));
@@ -166,7 +166,7 @@ void CoupPaint::createBut()
             pcmd->setMinimumSize(conf->but_cab_move_size); pcmd->setMaximumSize(conf->but_cab_move_size);
             pcmd->move(conf->but_cab_lr_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos]);
             pcmd->setVisible(true);
-            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
+            QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_move_clicked()));
 
             for (int row = 0; row < coup_pn.length(); ++row) {
                 v_slot[v_pos]++;
@@ -209,7 +209,7 @@ void CoupPaint::createBut()
                     lbl_m->move(lab_xy);
                     lbl_m->setVisible(true);
                 }
-                else {
+                else if (lbl_m != nullptr) {
                     lbl_m->setFixedHeight(lbl_m->height() + conf->but_V_offset);
                 }
 
@@ -224,7 +224,7 @@ void CoupPaint::createBut()
                     pcmd->move(cross_xy);
                     pcmd->setVisible(true);
 //                    pcmd->setStyleSheet(QString("background-color: %1").arg("#eff0f1"));
-                    QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
+//                    QObject::connect(pcmd, SIGNAL(clicked(bool)), this, SLOT(but_cab_clicked()));
                     lab_xy = QPoint(conf->lab_cross_H_offset[v_pos], conf->but_V_offset * v_slot[v_pos] + 1);
 
                     lbl_cr = new QLabel(cross_p.value(int_c_id).second, this);
@@ -369,7 +369,7 @@ void CoupPaint::but_ext_coup_clicked()
 //qDebug() << "but_ext_coup_clicked:" << bext->objectName() << "coup_id:" << coup_id;
 }
 
-void CoupPaint::but_cab_clicked()
+void CoupPaint::but_cab_move_clicked()
 {
     QPushButton *bcab = static_cast<QPushButton*>(sender());
 //qDebug() << "but_cab_clicked: " << bcab->objectName() << bcab->pos();

@@ -1,6 +1,7 @@
 #include "restaccessmanager.h"
 
-//#include <QJsonArray>//
+#include "b_logic/logger.h"
+
 using namespace Qt::StringLiterals;
 static constexpr auto contentTypeJson = "application/json"_L1;
 static const auto authorizationToken = "TOKEN"_ba;
@@ -10,21 +11,23 @@ RestAccessManager::RestAccessManager(QObject *parent) :
     QNetworkAccessManager(parent)
 { }
 
-static bool httpResponseSuccess(QNetworkReply* reply)
+static bool httpResponseSuccess(QNetworkReply* reply, QString method)
 {
     const int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const bool isReplyError = (reply->error() != QNetworkReply::NoError);
+    const bool result = (!isReplyError && (httpStatusCode >= 200 && httpStatusCode < 300));
 
-    qDebug() << "Request to path" << reply->request().url().path() << "finished, " << "HTTP:" <<  httpStatusCode;
-    if (isReplyError) qDebug() << "Error" << reply->error();
-//    else          qDebug() << "HTTP:" <<  httpStatusCode;
+    Logger::sendLog({QString("Request %1 %2 finished, HTTP: %3").arg(method).arg(reply->request().url().path()).arg(httpStatusCode)},
+                    (result) ? (method == "GET" ? "green" : "blue" ) : "red");
+    if (isReplyError) Logger::sendLog({QString(reply->errorString())}, "red");
 
-    return (!isReplyError && (httpStatusCode >= 200 && httpStatusCode < 300));
+    return result;
 }
 
 void RestAccessManager::setUrl(const QUrl& url)
 {
     m_url = url;
+    Logger::sendLog({"setting server url: ", url.toString()});
 }
 
 bool RestAccessManager::sslSupported() const
@@ -49,7 +52,7 @@ void RestAccessManager::get(const QString& api, const QUrlQuery& parameters, Res
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationToken, m_authorizationToken);
     QNetworkReply* reply = QNetworkAccessManager::get(request);
-    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
+    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply, "GET")); });
 }
 
 void RestAccessManager::post(const QString& api, const QVariantMap& value, ResponseCallback callback)
@@ -64,7 +67,7 @@ void RestAccessManager::post(const QString& api, const QJsonDocument& value, Res
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationToken, m_authorizationToken);
     QNetworkReply* reply = QNetworkAccessManager::post(request, value.toJson(QJsonDocument::Compact));
-    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
+    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply, "POST")); });
 }
 
 void RestAccessManager::put(const QString& api, const QVariantMap& value, ResponseCallback callback)
@@ -74,7 +77,7 @@ void RestAccessManager::put(const QString& api, const QVariantMap& value, Respon
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationToken, m_authorizationToken);
     QNetworkReply* reply = QNetworkAccessManager::put(request, QJsonDocument::fromVariant(value).toJson(QJsonDocument::Compact));
-    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
+    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply, "PUT")); });
 }
 
 void RestAccessManager::delete_(const QString& api, ResponseCallback callback)
@@ -83,7 +86,7 @@ void RestAccessManager::delete_(const QString& api, ResponseCallback callback)
     auto request = QNetworkRequest(m_url);
     request.setRawHeader(authorizationToken, m_authorizationToken);
     QNetworkReply* reply = QNetworkAccessManager::deleteResource(request);
-    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply)); });
+    QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){ callback(reply, httpResponseSuccess(reply, "DELETE")); });
 }
 
 

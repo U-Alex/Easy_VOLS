@@ -60,19 +60,31 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="leftMargin">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="topMargin">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="bottomMargin">
-       <number>4</number>
+       <number>2</number>
       </property>
       <item>
        <widget class="QLabel" name="lab_coord">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -87,7 +99,7 @@
       <item>
        <widget class="QLabel" name="lab_obj_name">
         <property name="text">
-         <string>      </string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -111,6 +123,10 @@
         </property>
         <property name="text">
          <string>редактирование</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/icons/resources/icons/edit.png</normaloff>:/icons/resources/icons/edit.png</iconset>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -141,6 +157,10 @@
         <property name="text">
          <string>применить</string>
         </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/icons/resources/icons/document-save.png</normaloff>:/icons/resources/icons/document-save.png</iconset>
+        </property>
        </widget>
       </item>
       <item>
@@ -150,6 +170,10 @@
         </property>
         <property name="text">
          <string>обновить карту</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/icons/resources/icons/refresh2.png</normaloff>:/icons/resources/icons/refresh2.png</iconset>
         </property>
        </widget>
       </item>
@@ -241,16 +265,16 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="leftMargin">
-         <number>4</number>
+         <number>2</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>2</number>
         </property>
         <property name="rightMargin">
-         <number>4</number>
+         <number>2</number>
         </property>
         <property name="bottomMargin">
-         <number>4</number>
+         <number>2</number>
         </property>
         <item>
          <widget class="QPushButton" name="pb_welding">
@@ -258,9 +282,22 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>C</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/icons/resources/icons/mufta.png</normaloff>:/icons/resources/icons/mufta.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
           </property>
           <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
            <bool>true</bool>
           </property>
          </widget>
@@ -287,7 +324,17 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>M</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/icons/resources/icons/map1.png</normaloff>:/icons/resources/icons/map1.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>26</width>
+            <height>26</height>
+           </size>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -303,7 +350,17 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>H</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/icons/resources/icons/eq_del.png</normaloff>:/icons/resources/icons/eq_del.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -316,7 +373,17 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>V</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/icons/resources/icons/eq_add.png</normaloff>:/icons/resources/icons/eq_add.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -349,6 +416,8 @@
   <tabstop>pb_obj_hide</tabstop>
   <tabstop>pb_all_visible</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

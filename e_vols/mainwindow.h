@@ -7,6 +7,7 @@
 #include "config.h"
 #include "map/mapmanager.h"
 #include "b_logic/usersession.h"
+//#include "b_logic/logger.h"
 
 namespace Ui { class MainWindow; }
 
@@ -25,6 +26,7 @@ private:
     Config         *conf = nullptr;
     MapManager     *mapManager = nullptr;
     UserSession    *userSession = nullptr;
+//    Logger         *logger = nullptr;
 
 private slots:
     void on_but_login_clicked();

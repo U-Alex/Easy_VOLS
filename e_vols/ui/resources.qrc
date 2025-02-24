@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/fav.png</file>
+        <file>resources/icons/application-exit.png</file>
+        <file>resources/icons/arrow-down-double.png</file>
+        <file>resources/icons/arrow-left-double.png</file>
+        <file>resources/icons/arrow-right-double.png</file>
+        <file>resources/icons/dialog-cancel.png</file>
+        <file>resources/icons/document-save.png</file>
+        <file>resources/icons/edit.png</file>
+        <file>resources/icons/eq_add.png</file>
+        <file>resources/icons/eq_del.png</file>
+        <file>resources/icons/go_up.png</file>
+        <file>resources/icons/go-back.png</file>
+        <file>resources/icons/go-next.png</file>
+        <file>resources/icons/kvar1.png</file>
+        <file>resources/icons/laser2.png</file>
+        <file>resources/icons/login.png</file>
+        <file>resources/icons/logout.png</file>
+        <file>resources/icons/logout2.png</file>
+        <file>resources/icons/map1.png</file>
+        <file>resources/icons/mufta2.png</file>
+        <file>resources/icons/refresh.png</file>
+        <file>resources/icons/refresh2.png</file>
+        <file>resources/icons/vols6.png</file>
+        <file>resources/icons/mufta.png</file>
+        <file>resources/icons/input_card1.png</file>
+        <file>resources/icons/mvr_2.png</file>
+    </qresource>
+</RCC>

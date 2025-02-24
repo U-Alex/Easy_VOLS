@@ -21,6 +21,7 @@ win32:OBJECTS_DIR = build/o/win32
 macx:OBJECTS_DIR = build/o/mac
 
 SOURCES += \
+    b_logic/logger.cpp \
     b_logic/restaccessmanager.cpp \
     b_logic/usersession.cpp \
     b_logic/objfab.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
     coup/couppaintext.cpp
 
 HEADERS += \
+    b_logic/logger.h \
     b_logic/restaccessmanager.h \
     b_logic/usersession.h \
     b_logic/objfab.h \
@@ -72,7 +74,13 @@ FORMS += \
     ui/couppaint.ui \
     ui/couppaintext.ui
 
+RESOURCES += \
+    ui/resources.qrc
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+

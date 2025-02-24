@@ -54,7 +54,7 @@ private slots:
     void createLinks();
 
     void but_ext_coup_clicked();
-    void but_cab_clicked();
+    void but_cab_move_clicked();
     void but_fiber_clicked();
 };
 

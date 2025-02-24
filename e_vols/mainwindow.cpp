@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "b_logic/logger.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,23 +9,24 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    Logger::setTextEdit(ui->textEdit_log);
     conf = new Config();
     userSession = new UserSession(conf, this);
     QObject::connect(userSession, &UserSession::sigAuthResult, this, &MainWindow::slotAuthResult);
     ui->but_logout->hide();
-//    slotAuthResult(true);   //
+//    slotAuthResult(true, "");   //
 }
 
 MainWindow::~MainWindow()
 {
-//    if (mapManager != nullptr) mapManager->deleteLater();
-//    userSession->deleteLater();
+    if (mapManager != nullptr) mapManager->deleteLater();
+    userSession->deleteLater();
     delete ui;
 }
 
 void MainWindow::slotAuthResult(bool ok, QString username)
 {
-//    qDebug() << "authResult" << ok;
+    Logger::sendLog({"log in:", username});
     if (ok) {
         ui->but_login->hide();
         ui->lineEdit_login->hide();
@@ -56,10 +58,11 @@ void MainWindow::on_but_logout_clicked()
     ui->but_login->setVisible(true);
     ui->lineEdit_login->setVisible(true);
     ui->lineEdit_password->setVisible(true);
-    ui->label_user->setText("авторизация");
     if (mapManager != nullptr) {
         mapManager->deleteLater();
         mapManager = nullptr;
+        Logger::sendLog({"logout:", ui->label_user->text()});
+        ui->label_user->setText("авторизация");
     }
 }
 
