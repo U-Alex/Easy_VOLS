@@ -38,7 +38,7 @@ void ObjDotSignal::setPreviousPosition(const QPointF previousPosition)
 
 void ObjDotSignal::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_flags & Movable){
+    if (m_flags & Movable) {
         if (event->scenePos().x() > 20 && event->scenePos().y() > 20) {//out of size
             auto dx = event->scenePos().x() - m_previousPosition.x();
             auto dy = event->scenePos().y() - m_previousPosition.y();
@@ -53,7 +53,7 @@ void ObjDotSignal::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjDotSignal::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_flags & Movable)
+    if (m_flags & Movable)
         setPreviousPosition(event->scenePos());
     else
         QGraphicsItem::mousePressEvent(event);
@@ -61,7 +61,11 @@ void ObjDotSignal::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjDotSignal::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    emit signalMouseRelease();
+    if (event->button() & Qt::RightButton) {
+        qDebug()<<"ObjDotSignal - RightButton";
+        //TODO delete dot
+    }
+//    emit signalMouseRelease();
     QGraphicsItem::mouseReleaseEvent(event);
 }
 

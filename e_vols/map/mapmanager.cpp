@@ -52,11 +52,11 @@ void MapManager::start()
     ui->map_frame_L->setEnabled(true);
     showAllObj();
 
-//    QImageReader::setAllocationLimit(conf->image_allocation_limit);
-//    QPixmap image(conf->map_f_name);
-//    map_size = image.size();
-//    pix_map = scene->addPixmap(image);
-//    pix_map->setData((int)Idx::label, "pix_map");
+    QImageReader::setAllocationLimit(conf->image_allocation_limit);
+    QPixmap image(conf->map_f_name);
+    map_size = image.size();
+    pix_map = scene->addPixmap(image);
+    pix_map->setData((int)Idx::label, "pix_map");
 
     mapView->centerOn(QPointF(9000, 15378));        //
 //    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
@@ -75,10 +75,14 @@ void MapManager::showAllObj()
 
 void MapManager::on_pb_map_refresh_clicked()
 {
+    pwcont_upd_list.clear();
+    coup_upd_list.clear();
+    line_upd_id.clear();
+    queue_label.clear();
     ui->pb_edit->setChecked(false);
-//    ui->pb_apply->setEnabled(false);
+    ui->pb_apply->setEnabled(false);
     ui->pb_link->setChecked(false);
-//    ui->pb_link->setEnabled(true);
+    ui->pb_link->setEnabled(true);
     last_coup = nullptr;
     int id = (int)Idx::label;
     foreach (QGraphicsItem *item, scene->items()) {
@@ -87,18 +91,23 @@ void MapManager::on_pb_map_refresh_clicked()
             delete item;
         }
     }
-//qDebug() << "all items removed";
     showAllObj();
 }
 
 void MapManager::on_pb_edit_pressed()
 {
     ui->pb_link->setChecked(false);
+//    scene->deselectItems();
+//    ui->lab_coord->setText("  ");
+//    ui->lab_obj_name->setText("");
 }
 
 void MapManager::on_pb_link_pressed()
 {
     ui->pb_edit->setChecked(false);
+//    scene->deselectItems();
+//    ui->lab_coord->setText("  ");
+//    ui->lab_obj_name->setText("");
 }
 
 void MapManager::on_pb_edit_toggled(bool checked)
@@ -173,14 +182,11 @@ void MapManager::on_pb_apply_clicked()
         }
         userSession->setData(ObjType::o_polyline, line_upd_list);
     }
-    qDebug() << "queue_label"<< queue_label;
-
+qDebug() << "queue_label"<< queue_label;
     pwcont_upd_list.clear();
     coup_upd_list.clear();
     line_upd_id.clear();
     queue_label.clear();
-
-//    ui->pb_map_refresh->click();
 }
 
 void MapManager::on_pb_pix_hide_toggled(bool checked)

@@ -37,7 +37,7 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() & Qt::LeftButton) {
         if (selectedItems().length() == 1) {
             QGraphicsItem *item = selectedItems().at(0);
-            QString obj_label = item->data((int)Idx::label).toString();
+            QString obj_label = item->data((int)Idx::label).toString();                 //TODO label -> ObjType::...
             if (obj_label == "pwcont") {
                 emit sigPwcontRelease(item);
             }
@@ -46,8 +46,8 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 emit sigCoupRelease(item);
             }
             else if (obj_label == "label") {
-                QGraphicsTextItem *label = static_cast<QGraphicsTextItem *>(item);
-                emit sigLabelClick(label);
+//                QGraphicsTextItem *label = static_cast<QGraphicsTextItem *>(item);
+//                emit sigLabelClick(label);
             }
             //else if (selectedItems().at(0)->data(6).toString() == "polyline") {
                 //QGraphicsTextItem *label = static_cast<QGraphicsTextItem *>(selectedItems().at(0));

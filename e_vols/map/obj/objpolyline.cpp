@@ -4,7 +4,6 @@ ObjPolyline::ObjPolyline(QObject *parent) : QObject(parent)
 {
     this->setAcceptHoverEvents(true);
     this->setFlags(ItemIsSelectable|ItemSendsGeometryChanges);
-
 }
 
 void ObjPolyline::setPath(const QPainterPath &path)
@@ -48,41 +47,49 @@ void ObjPolyline::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     setPath(newPath);
+    deleteDots();
     updateDots();
     QGraphicsItem::mouseDoubleClickEvent(event);
 }
 
 void ObjPolyline::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (! listDotes.isEmpty()) {
-        foreach (ObjDotSignal *dot, listDotes) {
-            dot->deleteLater();
-        }
-        listDotes.clear();
-    }
+    deleteDots();
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
-void ObjPolyline::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-    QGraphicsItem::hoverMoveEvent(event);
-}
+//void ObjPolyline::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    QGraphicsItem::hoverMoveEvent(event);
+//}
 
 void ObjPolyline::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (! move_mode || ! isSelected()) return;                      //режим edit и выбранная линия
+    updateDots();
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void ObjPolyline::updateDots()
+{
     QPainterPath linePath = path();
     for (int i = 0; i < linePath.elementCount(); i++) {
         QPointF point = linePath.elementAt(i);
         ObjDotSignal *dot = new ObjDotSignal(point, this);
-        if (i != 0 && i != linePath. elementCount() - 1) {          //крайние точки не двигать
+        if (i != 0 && i != linePath. elementCount() - 1)           //крайние точки не двигать
             connect(dot, &ObjDotSignal::signalMove, this, &ObjPolyline::slotMove);
-        }
-        connect(dot, &ObjDotSignal::signalMouseRelease, this, &ObjPolyline::checkForDeletePoints);
         dot->setDotFlags(ObjDotSignal::Movable);
         listDotes.append(dot);
     }
-    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void ObjPolyline::deleteDots()
+{
+    if (! listDotes.isEmpty()) {
+        foreach (ObjDotSignal *dot, listDotes)
+            dot->deleteLater();
+        listDotes.clear();
+    }
 }
 
 void ObjPolyline::slotMove(QGraphicsItem *signalOwner, qreal dx, qreal dy)
@@ -98,60 +105,40 @@ void ObjPolyline::slotMove(QGraphicsItem *signalOwner, qreal dx, qreal dy)
     setPath(linePath);
 }
 
-void ObjPolyline::checkForDeletePoints()
-{
+//void ObjPolyline::checkForDeletePoints()
+//{
 //qWarning() << "checkForDeletePoints" << m_pointForCheck;
-    if(m_pointForCheck != -1){
-        QPainterPath linePath = path();
+//    if (m_pointForCheck != -1) {
+//        QPainterPath linePath = path();
 
-        QPointF pathPoint = linePath.elementAt(m_pointForCheck);
-        if (m_pointForCheck > 0) {
-            QLineF lineToNear(linePath.elementAt(m_pointForCheck-1),pathPoint);
-            if (lineToNear.length() < 6.0) {
-                QPainterPath newPath;
-                newPath.moveTo(linePath.elementAt(0));
-                for (int i = 1; i < linePath.elementCount(); i++) {
-                    if (i != m_pointForCheck)
-                        newPath.lineTo(linePath.elementAt(i));
-                }
-                setPath(newPath);
-            }
-        }
-        if (m_pointForCheck < linePath.elementCount() - 1) {
-            QLineF lineToNear(linePath.elementAt(m_pointForCheck+1),pathPoint);
-            if(lineToNear.length() < 6.0) {
-                QPainterPath newPath;
-                newPath.moveTo(linePath.elementAt(0));
-                for(int i = 1; i < linePath.elementCount(); i++){
-                    if(i != m_pointForCheck)
-                        newPath.lineTo(linePath.elementAt(i));
-                }
-                setPath(newPath);
-            }
-        }
-        updateDots();
-        m_pointForCheck = -1;
-    }
-}
+//        QPointF pathPoint = linePath.elementAt(m_pointForCheck);
+//        if (m_pointForCheck > 0) {
+//            QLineF lineToNear(linePath.elementAt(m_pointForCheck-1),pathPoint);
+//            if (lineToNear.length() < 6.0) {
+//                QPainterPath newPath;
+//                newPath.moveTo(linePath.elementAt(0));
+//                for (int i = 1; i < linePath.elementCount(); i++) {
+//                    if (i != m_pointForCheck)
+//                        newPath.lineTo(linePath.elementAt(i));
+//                }
+//                setPath(newPath);
+//            }
+//        }
+//        if (m_pointForCheck < linePath.elementCount() - 1) {
+//            QLineF lineToNear(linePath.elementAt(m_pointForCheck+1),pathPoint);
+//            if(lineToNear.length() < 6.0) {
+//                QPainterPath newPath;
+//                newPath.moveTo(linePath.elementAt(0));
+//                for(int i = 1; i < linePath.elementCount(); i++){
+//                    if(i != m_pointForCheck)
+//                        newPath.lineTo(linePath.elementAt(i));
+//                }
+//                setPath(newPath);
+//            }
+//        }
+//        updateDots();
+//        m_pointForCheck = -1;
+//    }
+//}
 
-void ObjPolyline::updateDots()
-{
-    if (! listDotes.isEmpty()){
-        foreach (ObjDotSignal *dot, listDotes) {
-            dot->deleteLater();
-        }
-        listDotes.clear();
-    }
-    QPainterPath linePath = path();
-    for (int i = 0; i < linePath.elementCount(); i++) {
-        QPointF point = linePath.elementAt(i);
-        ObjDotSignal *dot = new ObjDotSignal(point, this);
-        if (i != 0 && i != linePath. elementCount() - 1) {          //крайние точки не двигать
-            connect(dot, &ObjDotSignal::signalMove, this, &ObjPolyline::slotMove);
-        }
-        connect(dot, &ObjDotSignal::signalMouseRelease, this, &ObjPolyline::checkForDeletePoints);
-        dot->setDotFlags(ObjDotSignal::Movable);
-        listDotes.append(dot);
-    }
-    emit sigClick(this);
-}
+

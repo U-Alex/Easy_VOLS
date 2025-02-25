@@ -8,7 +8,6 @@
 #include "map/mapscene.h"
 #include "map/obj/obj.h"
 
-
 class ObjFab : public QObject
 {
     Q_OBJECT

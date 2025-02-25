@@ -7,7 +7,6 @@
 
 #include "map/obj/objdotsignal.h"
 
-
 class ObjPolyline : public QObject, public QGraphicsPathItem
 {
     Q_OBJECT
@@ -28,7 +27,7 @@ protected:
     //void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+//    void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
@@ -39,7 +38,8 @@ private:
 private slots:
     void slotMove(QGraphicsItem *signalOwner, qreal dx, qreal dy);
     void updateDots();
-    void checkForDeletePoints();
+    void deleteDots();
+//    void checkForDeletePoints();
 
 };
 

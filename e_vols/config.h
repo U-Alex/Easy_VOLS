@@ -4,7 +4,7 @@
 #include <QSettings>
 #include <QSize>
 
-class Config
+class Config                    //TODO  to Singleton (as logger)
 {
 public:
     explicit Config();

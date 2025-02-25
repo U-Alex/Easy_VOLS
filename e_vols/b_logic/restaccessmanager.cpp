@@ -6,7 +6,6 @@ using namespace Qt::StringLiterals;
 static constexpr auto contentTypeJson = "application/json"_L1;
 static const auto authorizationToken = "TOKEN"_ba;
 
-
 RestAccessManager::RestAccessManager(QObject *parent) :
     QNetworkAccessManager(parent)
 { }

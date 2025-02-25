@@ -5,16 +5,13 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
-//class QGraphicsSceneHoverEventPrivate;
-//class QGraphicsSceneMouseEvent;
 
 class ObjDotSignal : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
-//    Q_PROPERTY(QPointF previousPosition READ previousPosition WRITE setPreviousPosition NOTIFY previousPositionChanged)
 public:
-    explicit ObjDotSignal(QGraphicsItem *parentItem = 0, QObject *parent = 0);
-    explicit ObjDotSignal(QPointF pos, QGraphicsItem *parentItem = 0, QObject *parent = 0);
+    explicit ObjDotSignal(QGraphicsItem *parentItem = nullptr, QObject *parent = nullptr);
+    explicit ObjDotSignal(QPointF pos, QGraphicsItem *parentItem = nullptr, QObject *parent = nullptr);
 
     enum Flags { Movable = 0x01 };
 
@@ -24,7 +21,7 @@ public:
 
 signals:
     void previousPositionChanged();
-    void signalMouseRelease();
+//    void signalMouseRelease();
     void signalMove(QGraphicsItem *signalOwner, qreal dx, qreal dy);
 
 protected:
@@ -35,7 +32,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
-    unsigned int m_flags;
+    uint    m_flags;
     QPointF m_previousPosition;
 
 };
