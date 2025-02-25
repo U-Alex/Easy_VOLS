@@ -18,6 +18,7 @@ public:
     explicit CoupManager(Config *ref_conf, UserSession *us, QWidget *parent = nullptr);
     ~CoupManager();
 
+    QVarLengthArray<bool> flood_guard{true, true, true};//L,R,P
 
 public slots:
     void slotNextCoup(uint, QPoint);
@@ -34,6 +35,7 @@ private:
     Config          *conf = nullptr;
     UserSession     *userSession = nullptr;
     uint             coup_id = 0;
+    QTime            time_last_update;
 
     CoupPaint       *coupPaint = nullptr;
     CoupPaintExt    *coupPaintExtL = nullptr;

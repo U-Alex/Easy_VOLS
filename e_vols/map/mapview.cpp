@@ -57,7 +57,6 @@ void MapView::slotCoupOnCenter(/*uint c_id, */QPoint pos)
 {
     ui->zoomSlider->setValue(250);
     this->scene()->items(pos).first()->setSelected(1);
-
     int to_y = pos.y() - (this->viewport()->rect().height() / 2);
     int to_x = pos.x() - (this->viewport()->rect().width() / 2);
     QPropertyAnimation *anim_v = new QPropertyAnimation(this->verticalScrollBar(), "value", this);

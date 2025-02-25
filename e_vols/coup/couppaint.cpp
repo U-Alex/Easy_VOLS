@@ -5,11 +5,12 @@
 #include <QPushButton>
 #include <QPen>
 
-CoupPaint::CoupPaint(Config *ref_conf, uint c_id, QWidget *parent) :
+CoupPaint::CoupPaint(Config *ref_conf, uint c_id, QVarLengthArray<bool>& fg, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::CoupPaint),
     conf(ref_conf),
-    coup_id(c_id)
+    coup_id(c_id),
+    flood_guard(fg)
 {
     ui->setupUi(this);
 }
@@ -21,7 +22,10 @@ CoupPaint::~CoupPaint()
 
 void CoupPaint::slotCoupPaint(uint c_id, QJsonDocument json)
 {
-    if (coup_id != c_id) return;
+    if (coup_id != c_id) {
+        flood_guard[2] = true;
+        return;
+    }
     else                 coup_id = 0;
 //    qDebug() << "slotCoupPaint c_id" << c_id;
     printHead(c_id, json["cur_coup"], json["coup_parr"]);

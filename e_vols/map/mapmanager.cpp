@@ -52,11 +52,11 @@ void MapManager::start()
     ui->map_frame_L->setEnabled(true);
     showAllObj();
 
-    QImageReader::setAllocationLimit(conf->image_allocation_limit);
-    QPixmap image(conf->map_f_name);
-    map_size = image.size();
-    pix_map = scene->addPixmap(image);
-    pix_map->setData((int)Idx::label, "pix_map");
+//    QImageReader::setAllocationLimit(conf->image_allocation_limit);
+//    QPixmap image(conf->map_f_name);
+//    map_size = image.size();
+//    pix_map = scene->addPixmap(image);
+//    pix_map->setData((int)Idx::label, "pix_map");
 
     mapView->centerOn(QPointF(9000, 15378));        //
 //    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));

@@ -13,14 +13,13 @@ class CoupPaint : public QFrame
 {
     Q_OBJECT
 public:
-    explicit CoupPaint(Config *ref_conf, uint c_id, QWidget *parent = nullptr);
+    explicit CoupPaint(Config *ref_conf, uint c_id, QVarLengthArray<bool>& fg, QWidget *parent = nullptr);
     ~CoupPaint();
 
 public slots:
     void slotCoupPaint(uint, QJsonDocument);
 
 signals:
-//    void fr_repaint(short);
     void sigNextCoup(int, QPoint);
     void sigNextCoupExt(QStringList, QStringList);
 
@@ -31,6 +30,7 @@ private:
     Ui::CoupPaint *ui;
     Config        *conf = nullptr;
     uint           coup_id = 0;
+    QVarLengthArray<bool>& flood_guard;
 
     QList<QJsonObject>              coup_ports;
     QList<QJsonObject>              cab_links;

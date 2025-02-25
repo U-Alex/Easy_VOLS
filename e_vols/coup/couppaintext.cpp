@@ -4,12 +4,13 @@
 #include <QPushButton>
 #include <QLabel>
 
-CoupPaintExt::CoupPaintExt(Config *ref_conf, uint c_id, short _fr_pos, QWidget *parent) :
+CoupPaintExt::CoupPaintExt(Config *ref_conf, uint c_id, short _fr_pos, QVarLengthArray<bool>& fg, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::CoupPaintExt),
     conf(ref_conf),
     coup_id(c_id),
-    fr_pos(_fr_pos)
+    fr_pos(_fr_pos),
+    flood_guard(fg)
 {
     ui->setupUi(this);
 }
@@ -21,6 +22,7 @@ CoupPaintExt::~CoupPaintExt()
 
 void CoupPaintExt::slotCoupPaintExt(uint c_id, short _fr_pos, QJsonDocument json)
 {
+    flood_guard[_fr_pos] = true;
     if (coup_id == c_id && fr_pos == _fr_pos) coup_id = 0;
     else return;
 //qDebug()<<"slotCoupPaintExt"<<c_id<<fr_pos/*<<json.object()*/;
