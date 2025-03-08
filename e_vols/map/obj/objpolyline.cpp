@@ -24,9 +24,9 @@ void ObjPolyline::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     QLineF checkLineSecond(clickPos.x() + 5, clickPos.y() - 5, clickPos.x() - 5, clickPos.y() + 5);
     QPainterPath oldPath = path();
     QPainterPath newPath;
-    for(int i = 0; i < oldPath.elementCount(); i++){
+    for (int i = 0; i < oldPath.elementCount(); i++){
         QLineF checkableLine(oldPath.elementAt(i), oldPath.elementAt(i+1));
-        if(checkableLine.intersects(checkLineFirst, 0) == 1 || checkableLine.intersects(checkLineSecond, 0) == 1) {
+        if (checkableLine.intersects(checkLineFirst, 0) == 1 || checkableLine.intersects(checkLineSecond, 0) == 1) {
             if(i == 0){
                 newPath.moveTo(oldPath.elementAt(i));
                 newPath.lineTo(clickPos);
@@ -41,7 +41,7 @@ void ObjPolyline::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
                 newPath.lineTo(oldPath.elementAt(i));
             }
         }
-        if(i == (oldPath.elementCount() - 2)) {
+        if (i == (oldPath.elementCount() - 2)) {
             newPath.lineTo(oldPath.elementAt(i + 1));
             i++;
         }

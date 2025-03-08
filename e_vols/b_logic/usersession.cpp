@@ -63,18 +63,18 @@ void UserSession::getData(ObjType objType, uint id)
     };
     QString api{"/api/vols/"};
     switch(objType) {
-        case ObjType::o_pw_cont:
-            api.append("pwcont/"); break;
-        case ObjType::o_locker:
-            api.append("locker/"); break;
-        case ObjType::o_coup:
-            api.append("coup/"); break;
-        case ObjType::o_polyline:
-            api.append("polyline/"); break;
-        case ObjType::o_label:
-            api.append("label/"); break;
-        default:
-            return;
+    case ObjType::o_pw_cont:
+        api.append("pwcont/"); break;
+    case ObjType::o_locker:
+        api.append("locker/"); break;
+    case ObjType::o_coup:
+        api.append("coup/"); break;
+    case ObjType::o_polyline:
+        api.append("polyline/"); break;
+    case ObjType::o_label:
+        api.append("label/"); break;
+    default:
+        return;
     }
     if (id) api.append(QString("%1").arg(id));
     QUrlQuery param("");

@@ -39,7 +39,8 @@ void MapManagerLink::slotCoupLinks(/*uint c_id, */QJsonDocument json/*, bool one
     QVector<uint> it;
     QStringList idid, cncn;
     foreach (QGraphicsItem *item, scene->items()) {
-        if (item->data((int)Idx::label).toString() == "polyline") {
+        //if (item->data((int)Idx::label).toString() == "polyline") {//
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline) {
             it << item->data((int)Idx::o_id).toUInt();
             idid = item->data((int)Idx::lineidid).toString().split(",");
             it << idid.at(0).toUInt() << idid.at(1).toUInt();
@@ -145,7 +146,8 @@ void MapManagerLink::butXClicked()
     QString line_id = but->objectName().split("_").at(2);
     userSession->deleteLink(line_id.toUInt());
     foreach (QGraphicsItem *item, scene->items()) {
-        if (item->data((int)Idx::label).toString() == "polyline") {
+        //if (item->data((int)Idx::label).toString() == "polyline") {
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline) {
             if (item->data((int)Idx::o_id).toString() == line_id) {
                 scene->removeItem(item);
                 delete item;

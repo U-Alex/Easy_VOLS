@@ -16,29 +16,26 @@ void ObjFab::slotDataToObj(ObjType objType, uint id, QJsonDocument json)
 {
     if (!id) {
         switch(objType) {
-            case ObjType::o_pw_cont:
-                this->createPwcont(json);
-                break;
-            case ObjType::o_locker:
-                this->createLocker(json);
-                break;
-            case ObjType::o_coup:
-                this->createCoup(json);
-                break;
-            case ObjType::o_polyline:
-                this->createPolyline(json);
-                break;
+        case ObjType::o_pw_cont:
+            this->createPwcont(json);
+            break;
+        case ObjType::o_locker:
+            this->createLocker(json);
+            break;
+        case ObjType::o_coup:
+            this->createCoup(json);
+            break;
+        case ObjType::o_polyline:
+            this->createPolyline(json);
+            break;
         case ObjType::o_label:
 //                this->createLabel(json);
-                break;
+            break;
+        default:
+            break;
         }
     }
 }
-
-//void ObjFab::slotObjToData(ObjType, QVector<QGraphicsObject *>)
-//{
-
-//}
 
 //--------------------------------------------------------------------------
 
@@ -51,7 +48,8 @@ void ObjFab::createPwcont(QJsonDocument json)
 //        qDebug() << "ob"<< ob;
         pw = new ObjPwcont(ob["obj_type"].toInt(0),
                            {"#99CCCC",});
-        pw->setData((int)Idx::label, "pwcont");
+//        pw->setData((int)Idx::label, "pwcont");//
+        pw->setData((int)Idx::o_type, (int)ObjType::o_pw_cont);
         pw->setData((int)Idx::o_id, ob["id"].toInt(0));
         pw->setData((int)Idx::o_name, ob["name"]);
         quint16 xx = ob["coord_x"].toInt(); if (xx < 20) xx = 20;
@@ -83,7 +81,8 @@ void ObjFab::createCoup(QJsonDocument json)
         }
 
         coup = new ObjCoup(type, color);
-        coup->setData((int)Idx::label, "coup");
+//        coup->setData((int)Idx::label, "coup");//
+        coup->setData((int)Idx::o_type, (int)ObjType::o_coup);
         coup->setData((int)Idx::o_id, ob["id"].toInt());
         coup->setData((int)Idx::o_name, ob["name"]);
         coup->setData((int)Idx::parr_id, ob["parrent"].toInt());
@@ -112,7 +111,8 @@ void ObjFab::createLocker(QJsonDocument json)
                             ob["co"].toString(),
                             ob["object_owner"].toString()
                            });
-        lo->setData((int)Idx::label, "locker");
+//        lo->setData((int)Idx::label, "locker");//
+        lo->setData((int)Idx::o_type, (int)ObjType::o_locker);
         lo->setData((int)Idx::o_id, ob["id"].toInt(0));
         lo->setData((int)Idx::o_name, ob["name"]);
         quint16 xx = ob["coord_x"].toInt(); if (xx < 20) xx = 20;
@@ -145,7 +145,8 @@ void ObjFab::createPolyline(QJsonDocument json)
 
         polyline = new ObjPolyline(scene);
         polyline->setPath(path);
-        polyline->setData((int)Idx::label, "polyline");
+//        polyline->setData((int)Idx::label, "polyline");//
+        polyline->setData((int)Idx::o_type, (int)ObjType::o_polyline);
         polyline->setData((int)Idx::o_id, ob["id"].toInt(0));
         polyline->setPen(QPen(QColor(ob["cabcolor"].toString()),
                               param.at(0).toInt(),

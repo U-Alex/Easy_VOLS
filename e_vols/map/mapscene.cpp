@@ -6,7 +6,6 @@ MapScene::MapScene(QObject *parent) :
     QGraphicsScene(parent)
 {
     setItemIndexMethod(QGraphicsScene::BspTreeIndex);//::NoIndex
-
 }
 
 void MapScene::deselectItems()
@@ -22,11 +21,27 @@ void MapScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //qWarning() << this->itemAt(event->scenePos(), QTransform());
     if (event->button() & Qt::LeftButton) {
         QGraphicsItem *item = this->itemAt(event->scenePos(), QTransform());
-        QString obj_label = item->data((int)Idx::label).toString();
-        if (obj_label == "pwcont")          emit sigPwcontPress(item);
-        if (obj_label == "coup")            emit sigCoupPress(item);
-        else if (obj_label == "locker")     emit sigLockerPress(item);
-        else if (obj_label == "polyline")   emit sigLineClick(item);
+//        QString obj_label = item->data((int)Idx::label).toString();
+        uint obj_type = item->data((int)Idx::o_type).toUInt();
+        switch (obj_type) {
+        case (int)ObjType::o_pw_cont:
+            emit sigPwcontPress(item);
+            break;
+        case (int)ObjType::o_coup:
+            emit sigCoupPress(item);
+            break;
+        case (int)ObjType::o_locker:
+            emit sigLockerPress(item);
+            break;
+        case (int)ObjType::o_polyline:
+            emit sigLineClick(item);
+            break;
+        }
+
+//        if (obj_label == "pwcont")          emit sigPwcontPress(item);
+//        if (obj_label == "coup")            emit sigCoupPress(item);
+//        else if (obj_label == "locker")     emit sigLockerPress(item);
+//        else if (obj_label == "polyline")   emit sigLineClick(item);
     }
     QGraphicsScene::mousePressEvent(event);
 }
@@ -37,18 +52,32 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() & Qt::LeftButton) {
         if (selectedItems().length() == 1) {
             QGraphicsItem *item = selectedItems().at(0);
-            QString obj_label = item->data((int)Idx::label).toString();                 //TODO label -> ObjType::...
-            if (obj_label == "pwcont") {
+            //QString obj_label = item->data((int)Idx::label).toString();                 //TODO label -> ObjType::...
+            uint obj_type = item->data((int)Idx::o_type).toUInt();
+            switch (obj_type) {
+            case (int)ObjType::o_pw_cont:
                 emit sigPwcontRelease(item);
-            }
-            if (obj_label == "coup") {
-                //QGraphicsItem *coup = static_cast<QGraphicsItem *>(item);
+                break;
+            case (int)ObjType::o_coup:
                 emit sigCoupRelease(item);
+                break;
+            case (int)ObjType::o_label:
+//                    QGraphicsTextItem *label = static_cast<QGraphicsTextItem *>(item);
+//                    emit sigLabelClick(label);
+                break;
             }
-            else if (obj_label == "label") {
+
+//            if (obj_label == "pwcont") {
+//                emit sigPwcontRelease(item);
+//            }
+//            if (obj_label == "coup") {
+//                //QGraphicsItem *coup = static_cast<QGraphicsItem *>(item);
+//                emit sigCoupRelease(item);
+//            }
+//            else if (obj_label == "label") {
 //                QGraphicsTextItem *label = static_cast<QGraphicsTextItem *>(item);
 //                emit sigLabelClick(label);
-            }
+//            }
             //else if (selectedItems().at(0)->data(6).toString() == "polyline") {
                 //QGraphicsTextItem *label = static_cast<QGraphicsTextItem *>(selectedItems().at(0));
                 //emit sig_line_click(selectedItems().at(0));

@@ -21,7 +21,7 @@ Config::Config()
 
     str_to_map(setting->value("map/cab_color").toString().split(_sep_), &cab_color);
     str_to_map(setting->value("map/cab_width").toString().split(_sep_), &cab_width);
-    str_to_map(setting->value("coup/ru_color_list").toString().split(_sep_), &ru_color_list);
+    str_to_map(setting->value("coup/ru_color_list").toString().split(_sep_), &ru_color_list);//TODO recieve from rest
 
     color_coup_ext = setting->value("coup/color_coup_ext").toString().split(_sep_);
     color_cross = setting->value("coup/color_cross").toString().split(_sep_);

@@ -17,7 +17,6 @@ public:
 
 public slots:
     void slotDataToObj(ObjType, uint, QJsonDocument);
-//    void slotObjToData(ObjType, QVector<QGraphicsObject *>);
 
 private:
     Config         *conf;

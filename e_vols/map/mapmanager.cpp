@@ -56,7 +56,7 @@ void MapManager::start()
     QPixmap image(conf->map_f_name);
     map_size = image.size();
     pix_map = scene->addPixmap(image);
-    pix_map->setData((int)Idx::label, "pix_map");
+    pix_map->setData((int)Idx::o_type, (int)ObjType::pix_map);
 
     mapView->centerOn(QPointF(9000, 15378));        //
 //    mapView->centerOn(QPointF(map_size.width()/2, map_size.height()/2));
@@ -84,9 +84,9 @@ void MapManager::on_pb_map_refresh_clicked()
     ui->pb_link->setChecked(false);
     ui->pb_link->setEnabled(true);
     last_coup = nullptr;
-    int id = (int)Idx::label;
+//    int id = (int)Idx::label;
     foreach (QGraphicsItem *item, scene->items()) {
-        if (item->data(id).toString() != "pix_map") {
+        if (item->data((int)Idx::o_type) != (int)ObjType::pix_map) {
             scene->removeItem(item);
             delete item;
         }
@@ -113,14 +113,21 @@ void MapManager::on_pb_link_pressed()
 void MapManager::on_pb_edit_toggled(bool checked)
 {
     ui->map_scrollArea->setVisible(checked);
-    int conf_lab = (int)Idx::label;
-    QString lab{};
-    QStringList lab_list{"pwcont", "coup", "label"};
+//    int conf_lab = (int)Idx::label;
+//    QString lab{};
+//    QStringList lab_list{"pwcont", "coup", "label"};
+//    foreach (QGraphicsItem *item, scene->items()) {
+//        lab = item->data(conf_lab).toString();
+//        if (lab == "polyline")
+//            static_cast<ObjPolyline *>(item)->setMove(checked);
+//        if (lab_list.contains(lab))
+//            item->setFlag(QGraphicsItem::ItemIsMovable, checked);
+//    }
+    QList<uint> lab_list{(int)ObjType::o_pw_cont, (int)ObjType::o_coup, (int)ObjType::o_label};
     foreach (QGraphicsItem *item, scene->items()) {
-        lab = item->data(conf_lab).toString();
-        if (lab == "polyline")
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline)
             static_cast<ObjPolyline *>(item)->setMove(checked);
-        if (lab_list.contains(lab))
+        if (lab_list.contains(item->data((int)Idx::o_type)))
             item->setFlag(QGraphicsItem::ItemIsMovable, checked);
     }
     if (fr_edit != nullptr) {
@@ -166,7 +173,7 @@ void MapManager::on_pb_apply_clicked()
         QMap<int, QList<QVariant>>  line_upd_list;
         ObjPolyline *poly;
         foreach (QGraphicsItem *item, scene->items()) {
-            if (item->data((int)Idx::label).toString() == "polyline") {
+            if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline) {
                 int l_id = item->data((int)Idx::o_id).toInt();
                 if (line_upd_id.contains(l_id)) {
                     poly = static_cast<ObjPolyline *>(item);
@@ -213,7 +220,7 @@ void MapManager::on_pb_all_visible_clicked()
         item->setSelected(false);
         item->setVisible(true);
         item->setData((int)Idx::VisMode, 1);
-        if (item->data((int)Idx::label).toString() == "polyline") {
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline) {
             ObjPolyline *poly = static_cast<ObjPolyline *>(item);
             param = poly->data(conf_param).toString().split(",");
             poly->setPen(QPen(QColor(poly->data((int)Idx::cabcolor).toString()),
@@ -316,12 +323,13 @@ void MapManager::slotCoupMoved(QPointF to_pos)
     coup_upd_list.insert(c_id, {to_pos.x(), to_pos.y(), parr_id, curr_type});
     foreach (QGraphicsItem *item, scene->items()) {
         if (curr_type == 0) {
-            if ((item->data((int)Idx::label).toString() == "locker") && (item->data((int)Idx::o_id).toInt() == parr_id)) {
+            if ((item->data((int)Idx::o_type) == (int)ObjType::o_locker) &&
+                (item->data((int)Idx::o_id).toInt() == parr_id)) {
                 //obj_lo *lo = static_cast<obj_lo *>(item);
                 item->setPos(to_pos);
             }
         }
-        if (item->data((int)Idx::label).toString() == "polyline") {
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline) {
             idid = item->data((int)Idx::lineidid).toString();
 
             if (idid.startsWith(last_id+",")) {
@@ -450,25 +458,29 @@ void MapManager::slotShowHopData(/*uint c_p_id, */QJsonDocument json)
             coup_id << coup_id_list[idx+1];
             cab_len << cab_len_list[idx+1];
         }
-        idid_list << QPair<QString, QString>(QString("%1").arg(coup_id_list[idx]), QString("%1").arg(coup_id_list[idx+1]));
-        cncn_list << QPair<QString, QString>(QString("%1").arg(cab_num_list[idx]), QString("%1").arg(cab_num_list[idx+1]));
+        idid_list << QPair<QString, QString>(QString("%1").arg(coup_id_list[idx]),
+                                             QString("%1").arg(coup_id_list[idx+1]));
+        cncn_list << QPair<QString, QString>(QString("%1").arg(cab_num_list[idx]),
+                                             QString("%1").arg(cab_num_list[idx+1]));
     }
 //qDebug()<<coup_id<<cab_len<<idid<<cncn;
     foreach (QGraphicsItem *item, scene->items()) {
-        if (item->data((int)Idx::label).toString() == "coup") {
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_coup) {
             if (coup_id.contains(item->data((int)Idx::o_id).toInt()))
                 item->setData((int)Idx::VisMode, 2);
             else
                 item->setData((int)Idx::VisMode, 0);
         }
-        if (item->data((int)Idx::label).toString() == "polyline") {
+        if (item->data((int)Idx::o_type) == (int)ObjType::o_polyline) {
             idid = item->data((int)Idx::lineidid).toString().split(",");
             cncn = item->data((int)Idx::linecncn).toString().split(",");
             ObjPolyline *poly = static_cast<ObjPolyline *>(item);
             bool found = false;
             for (int idx = 0; idx < idid_list.size(); ++idx) {
-                if ((idid.at(0) == idid_list.at(idx).first && idid.at(1) == idid_list.at(idx).second && cncn.at(0) == cncn_list.at(idx).first && cncn.at(1) == cncn_list.at(idx).second) ||
-                    (idid.at(1) == idid_list.at(idx).first && idid.at(0) == idid_list.at(idx).second && cncn.at(1) == cncn_list.at(idx).first && cncn.at(0) == cncn_list.at(idx).second)
+                if ((idid.at(0) == idid_list.at(idx).first && idid.at(1) == idid_list.at(idx).second &&
+                     cncn.at(0) == cncn_list.at(idx).first && cncn.at(1) == cncn_list.at(idx).second) ||
+                    (idid.at(1) == idid_list.at(idx).first && idid.at(0) == idid_list.at(idx).second &&
+                     cncn.at(1) == cncn_list.at(idx).first && cncn.at(0) == cncn_list.at(idx).second)
                    ) {
                     found = true;
                     break;
